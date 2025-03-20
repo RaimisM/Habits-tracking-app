@@ -9,7 +9,7 @@ function getStoredFavorites() {
     const favoritesStored = localStorage.getItem(FAVORITES_KEY)
 
     return favoritesStored ? JSON.parse(favoritesStored) : []
-  } catch (error) {
+  } catch {
     return []
   }
 }
