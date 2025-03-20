@@ -1,6 +1,6 @@
 <script setup>
-import FavoriteButton from '../components/FavoriteButton.vue'
-import { date, apod } from './apodDate'
+import FavoriteButton from '../components/HabitList.vue'
+import { date, apod } from './AddHabitView.vue'
 </script>
 
 <template>

@@ -1,6 +1,6 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import ErrorToast from './components/ErrorToast.vue'
+import ErrorToast from './components/HabitItem.vue'
 </script>
 
 <template>

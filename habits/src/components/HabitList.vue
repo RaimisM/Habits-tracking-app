@@ -1,5 +1,5 @@
 <script setup>
-import { isFavorite, toggleFavorite } from '../store/favorites'
+import { isFavorite, toggleFavorite } from '../store/habits'
 
 defineProps({
   apod: {
