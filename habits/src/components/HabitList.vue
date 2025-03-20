@@ -1,45 +1,35 @@
 <script setup>
-import { isFavorite, toggleFavorite } from '../store/habits'
+import { ref, computed } from 'vue'
+import { useHabitStore } from '../store/habits'
+import HabitItem from './HabitItem.vue' // ✅ Import the HabitItem component
 
-defineProps({
-  apod: {
-    type: Object,
-    required: true,
-  },
-})
+const store = useHabitStore()
+const selectedDate = ref(new Date().toISOString().split('T')[0])
+
+// Use the getter to retrieve habits for the selected date
+const habits = computed(() => store.getHabitsForDate(selectedDate.value))
 </script>
 
 <template>
-  <button
-    class="favorite-button"
-    :class="{ active: isFavorite(apod) }"
-    type="button"
-    @click="toggleFavorite(apod)"
-  >
-    ❤️
-  </button>
+  <div class="mt-4">
+    <h2 class="text-xl font-bold mb-2">Habits for {{ selectedDate }}</h2>
+
+    <!-- Loading spinner -->
+    <div v-if="habits.length === 0" class="flex justify-center items-center h-48">
+      <div
+        class="spinner-border animate-spin border-4 rounded-full border-t-blue-500 border-gray-200 w-16 h-16"
+      ></div>
+    </div>
+
+    <!-- Habit list -->
+    <transition-group name="fade">
+      <HabitItem v-for="habit in habits" :key="habit.id" :habit="habit" />
+    </transition-group>
+
+    <!-- No habits message -->
+    <p v-if="habits.length === 0" class="text-gray-500">No habits added yet.</p>
+  </div>
+  <div class="flex justify-center items-center h-48">
+    <div class="spinner"></div>
+  </div>
 </template>
-
-<style scoped>
-.favorite-button {
-  position: absolute;
-  top: 0;
-  right: 0;
-  opacity: 0.6;
-  z-index: 1;
-  filter: saturate(0);
-  transition:
-    opacity,
-    filter 0.3s ease;
-  cursor: pointer;
-  border: none;
-  background: transparent;
-  padding: 0.5rem;
-  font-size: 2.5rem;
-}
-
-.favorite-button.active {
-  opacity: 1;
-  filter: saturate(1);
-}
-</style>

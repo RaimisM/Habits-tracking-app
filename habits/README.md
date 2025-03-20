@@ -33,3 +33,9 @@ npm run build
 ```sh
 npm run lint
 ```
+
+
+
+npm install pinia
+npm install tailwindcss postcss autoprefixer
+npx tailwindcss init -p

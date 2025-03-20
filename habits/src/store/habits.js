@@ -1,41 +1,51 @@
-import { ref, shallowReadonly, watch } from 'vue'
-import { setError } from './errors'
+import { defineStore } from 'pinia'
 
-const FAVORITES_KEY = 'favorites'
-const favorites = ref(getStoredFavorites())
+export const useHabitStore = defineStore('habits', {
+  state: () => ({
+    habits: [],
+    selectedDate: new Date().toISOString().split('T')[0], // Store date as a string (yyyy-mm-dd)
+  }),
 
-function getStoredFavorites() {
-  try {
-    const favoritesStored = localStorage.getItem(FAVORITES_KEY)
+  getters: {
+    // Return habits filtered by the selected date
+    getHabitsForDate: (state) => (date) => {
+      return state.habits.filter((habit) => habit.date === date)
+    },
+  },
 
-    return favoritesStored ? JSON.parse(favoritesStored) : []
-  } catch {
-    return []
-  }
-}
+  actions: {
+    loadHabits() {
+      const storedHabits = JSON.parse(localStorage.getItem('habits')) || []
+      this.habits = storedHabits
+    },
 
-watch(favorites, (favoritesUpdated) => {
-  try {
-    localStorage.setItem(FAVORITES_KEY, JSON.stringify(favoritesUpdated))
-  } catch (error) {
-    setError(
-      new Error('Could not store your favorites. You might need to refresh the page', {
-        cause: error,
-      }),
-    )
-  }
+    addHabit(habitName) {
+      const newHabit = {
+        id: Date.now(),
+        name: habitName,
+        completed: false,
+        date: new Date().toISOString().split('T')[0], // Save habit with current date
+      }
+      this.habits.push(newHabit)
+      this.saveHabits() // Save to localStorage
+    },
+
+    removeHabit(id) {
+      this.habits = this.habits.filter((habit) => habit.id !== id)
+      this.saveHabits()
+    },
+
+    updateHabitStatus(id, completed) {
+      const habit = this.habits.find((h) => h.id === id)
+      if (habit) {
+        habit.completed = completed
+        this.saveHabits()
+      }
+    },
+
+    saveHabits() {
+      localStorage.setItem('habits', JSON.stringify(this.habits))
+    },
+  },
+  persist: true,
 })
-
-export function isFavorite(apod) {
-  return favorites.value.some((favorite) => favorite.date === apod.date)
-}
-
-export function toggleFavorite(apod) {
-  const favoritesUpdated = isFavorite(apod)
-    ? favorites.value.filter((favorite) => favorite.date !== apod.date)
-    : [...favorites.value, apod]
-
-  favorites.value = favoritesUpdated
-}
-
-export const favoritesList = shallowReadonly(favorites)

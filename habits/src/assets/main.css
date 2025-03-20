@@ -1,21 +1,63 @@
-@import url('./base.css');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-a,
-.green {
-  transition: 0.4s;
-  color: hsl(160deg 100% 37% / 100%);
-  text-decoration: none;
+/* ==================== GLOBAL STYLES ==================== */
+body {
+  @apply bg-gray-100 text-gray-900 font-sans;
 }
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsl(160deg 100% 37% / 20%);
-  }
+/* ==================== BUTTON STYLES ==================== */
+.btn {
+  @apply px-4 py-2 rounded-lg text-white font-medium transition-all duration-300;
 }
 
-@media (width >= 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
+.btn-primary {
+  @apply bg-blue-500 hover:bg-blue-600 active:bg-blue-700;
+}
+
+.btn-danger {
+  @apply bg-red-500 hover:bg-red-600 active:bg-red-700;
+}
+
+.btn-disabled {
+  @apply bg-gray-300 text-gray-600 cursor-not-allowed;
+}
+
+/* ==================== MODAL STYLES ==================== */
+.modal-bg {
+  @apply fixed inset-0 flex items-center justify-center bg-black bg-opacity-50;
+}
+
+.modal-content {
+  @apply bg-white p-6 rounded-lg shadow-lg max-w-sm w-full;
+}
+
+/* ==================== TRANSITIONS & ANIMATIONS ==================== */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease-in-out;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: transform 0.3s ease-in-out;
+}
+
+.slide-enter {
+  transform: translateX(-100%);
+}
+
+.slide-leave-to {
+  transform: translateX(100%);
+}
+
+/* ==================== LOADING SPINNER ==================== */
+.spinner {
+  @apply w-12 h-12 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin;
 }
