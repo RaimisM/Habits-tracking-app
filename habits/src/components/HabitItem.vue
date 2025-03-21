@@ -21,7 +21,7 @@ const removeHabit = () => {
       <input type="checkbox" v-model="habit.completed" @change="updateHabitStatus" />
       <span :class="{ 'completed': habit.completed }">{{ habit.name }}</span>
     </div>
-    <button @click="removeHabit">Delete</button>
+    <button @click="removeHabit" class="delete-button">Delete</button>
   </div>
 </template>
 
@@ -37,5 +37,14 @@ input[type='checkbox'] {
 .completed {
   text-decoration: line-through;
   color: #9ca3af; /* Gray color equivalent to text-gray-400 in Tailwind */
+}
+
+.delete-button {
+  background-color: #f87171; /* Red color equivalent to bg-red-500 in Tailwind */
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  margin-top: 5px;
+  cursor: pointer;
 }
 </style>
