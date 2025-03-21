@@ -7,9 +7,9 @@ export const useHabitStore = defineStore('habits', {
   }),
 
   getters: {
-    // Return habits filtered by the selected date
+    // Get habits for the selected date
     getHabitsForDate: (state) => (date) => {
-      return state.habits.filter((habit) => habit.date === date)
+      return state.habits.filter((habit) => habit.active && habit.date <= date)
     },
   },
 
@@ -24,10 +24,27 @@ export const useHabitStore = defineStore('habits', {
         id: Date.now(),
         name: habitName,
         completed: false,
-        date: new Date().toISOString().split('T')[0], // Save habit with current date
+        active: true, // Default to active
+        date: new Date().toISOString().split('T')[0], // Store with current date
       }
       this.habits.push(newHabit)
-      this.saveHabits() // Save to localStorage
+      this.saveHabits()
+    },
+
+    updateHabitName(id, newName) {
+      const habit = this.habits.find((h) => h.id === id)
+      if (habit) {
+        habit.name = newName
+        this.saveHabits()
+      }
+    },
+
+    stopHabit(id) {
+      const habit = this.habits.find((h) => h.id === id)
+      if (habit) {
+        habit.active = false // Marks habit as stopped but retains past data
+        this.saveHabits()
+      }
     },
 
     removeHabit(id) {
