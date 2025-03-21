@@ -35,7 +35,7 @@ const editHabit = () => {
 <template>
   <div class="habit-item">
     <!-- Habit name with edit functionality -->
-    <div class="flex items-center justify-between p-4">
+    <div>
       <input
         type="checkbox"
         v-model="habit.completed"
@@ -71,18 +71,20 @@ const editHabit = () => {
 .habit-item {
   background-color: white;
   padding: 16px;
-  border-radius: 8px;
+  border-radius: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   margin-bottom: 12px;
 }
 
 .habit-checkbox {
   transition: transform 0.3s ease-in-out;
+  height: 30px;
+  width: 30px;
 }
 
 .completed {
   text-decoration: line-through;
-  color: #9ca3af;
+  color: #3f453d;
 }
 
 .edit-input {
