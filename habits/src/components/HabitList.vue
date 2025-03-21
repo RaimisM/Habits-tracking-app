@@ -15,11 +15,9 @@ onMounted(() => {
 
 <template>
   <div>
-    <h2>Habits for {{ selectedDate }}</h2>
+    <h2>Your habits:</h2>
 
-    <div v-if="habits.length === 0">
-      <div class="spinner"></div>
-    </div>
+
 
     <transition-group name="fade-list" tag="div">
       <HabitItem v-for="habit in habits" :key="habit.id" :habit="habit" />
@@ -30,14 +28,7 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.spinner {
-  width: 3rem;
-  height: 3rem;
-  border: 4px solid #ddd;
-  border-top-color: blue;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);
