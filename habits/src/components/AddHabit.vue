@@ -22,19 +22,18 @@ const addHabit = () => {
 
 <template>
   <div>
-    <button @click="isOpen = true" class="btn btn-primary">+ Add Habit</button>
+    <button @click="isOpen = true" >+ Add Habit</button>
 
-    <div v-if="isOpen" class="modal-bg">
-      <div class="modal-content">
-        <h2 class="text-lg font-semibold">New Habit</h2>
+    <div v-if="isOpen" >
+      <div>
+        <h2>New Habit</h2>
         <input
           v-model="newHabit"
-          class="border p-2 w-full rounded mt-2"
           placeholder="Enter habit name"
         />
-        <div class="flex justify-end gap-2 mt-4">
-          <button @click="isOpen = false" class="btn btn-danger">Cancel</button>
-          <button @click="addHabit" class="btn btn-primary">Add</button>
+        <div>
+          <button @click="isOpen = false">Cancel</button>
+          <button @click="addHabit">Add</button>
         </div>
       </div>
     </div>

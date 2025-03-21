@@ -16,18 +16,17 @@ const changeDay = (days) => {
 </script>
 
 <template>
-  <div class="flex items-center justify-between p-4 bg-gray-100 rounded-lg">
+  <div>
     <transition name="slide">
-      <button @click="changeDay(-1)" class="px-3 py-2 bg-blue-500 text-white rounded md:text-lg">
+      <button @click="changeDay(-1)">
         ← Previous
       </button>
     </transition>
-    <span class="font-semibold text-lg md:text-xl">{{ selectedDate }}</span>
+    <span>{{ selectedDate }}</span>
     <transition name="slide">
       <button
         @click="changeDay(1)"
         :disabled="selectedDate === today"
-        class="px-3 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300 md:text-lg"
       >
         Next →
       </button>

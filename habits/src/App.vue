@@ -1,5 +1,5 @@
 <script setup>
-import { useHabitStore } from '../src/store/habits'
+import { useHabitStore } from '../src/store/habits.js'
 import { onMounted } from 'vue'
 
 const store = useHabitStore()

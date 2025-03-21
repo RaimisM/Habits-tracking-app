@@ -1,35 +1,46 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useHabitStore } from '../store/habits'
-import HabitItem from './HabitItem.vue' // ✅ Import the HabitItem component
+import HabitItem from './HabitItem.vue' // Import component
 
 const store = useHabitStore()
 const selectedDate = ref(new Date().toISOString().split('T')[0])
 
-// Use the getter to retrieve habits for the selected date
 const habits = computed(() => store.getHabitsForDate(selectedDate.value))
+
+onMounted(() => {
+  store.loadHabits() // Load habits on mount
+})
 </script>
 
 <template>
-  <div class="mt-4">
-    <h2 class="text-xl font-bold mb-2">Habits for {{ selectedDate }}</h2>
+  <div>
+    <h2>Habits for {{ selectedDate }}</h2>
 
-    <!-- Loading spinner -->
-    <div v-if="habits.length === 0" class="flex justify-center items-center h-48">
-      <div
-        class="spinner-border animate-spin border-4 rounded-full border-t-blue-500 border-gray-200 w-16 h-16"
-      ></div>
+    <div v-if="habits.length === 0">
+      <div class="spinner"></div>
     </div>
 
-    <!-- Habit list -->
-    <transition-group name="fade">
+    <transition-group name="fade-list" tag="div">
       <HabitItem v-for="habit in habits" :key="habit.id" :habit="habit" />
     </transition-group>
 
-    <!-- No habits message -->
-    <p v-if="habits.length === 0" class="text-gray-500">No habits added yet.</p>
-  </div>
-  <div class="flex justify-center items-center h-48">
-    <div class="spinner"></div>
+    <p v-if="habits.length === 0">No habits added yet.</p>
   </div>
 </template>
+
+<style scoped>
+.spinner {
+  width: 3rem;
+  height: 3rem;
+  border: 4px solid #ddd;
+  border-top-color: blue;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+</style>
