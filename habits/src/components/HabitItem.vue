@@ -95,62 +95,106 @@ const isHabitVisible = computed(() => {
 
 <style scoped>
 /* Habit item styling */
+/* Habit Item Container */
 .habit-item {
-  background-color: white;
-  padding: 16px;
-  border-radius: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.habit-item:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Checkbox and Habit Name */
+.habit-item > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
 }
 
 .habit-checkbox {
-  transition: transform 0.3s ease-in-out;
-  height: 30px;
-  width: 30px;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #4a90e2;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+}
+
+.habit-checkbox:checked {
+  background-color: #4a90e2;
+}
+
+.habit-checkbox:checked::after {
+  content: '✓';
+  position: absolute;
+  color: white;
+  font-size: 14px;
+  left: 4px;
+  top: -1px;
 }
 
 .completed {
   text-decoration: line-through;
-  color: #3f453d;
+  color: #888888;
 }
 
 .edit-input {
-  border: 1px solid #ccc;
-  padding: 8px;
+  padding: 6px 10px;
+  border: 1px solid #dddddd;
   border-radius: 4px;
-  margin-top: 8px;
+  font-size: 14px;
   width: 100%;
 }
 
+/* Action Buttons */
 .action-buttons {
   display: flex;
-  gap: 10px;
-  margin-top: 10px;
+  gap: 8px;
 }
 
-.edit-button,
-.stop-button,
-.delete-button {
-  padding: 8px 16px;
+button {
+  padding: 6px 12px;
+  border: none;
   border-radius: 4px;
+  font-size: 14px;
   cursor: pointer;
+  transition: background-color 0.2s;
 }
 
 .edit-button {
-  background-color: #3b82f6; /* Blue color */
+  background-color: #4a90e2;
   color: white;
-  border: none;
+}
+
+.edit-button:hover {
+  background-color: #3a80d2;
 }
 
 .stop-button {
-  background-color: #f59e0b; /* Yellow color */
+  background-color: #f5a623;
   color: white;
-  border: none;
+}
+
+.stop-button:hover {
+  background-color: #e59613;
 }
 
 .delete-button {
-  background-color: #f87171; /* Red color */
+  background-color: #e74c3c;
   color: white;
-  border: none;
+}
+
+.delete-button:hover {
+  background-color: #d73c2c;
 }
 </style>
