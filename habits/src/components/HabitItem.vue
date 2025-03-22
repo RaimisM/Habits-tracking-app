@@ -89,15 +89,13 @@ const isHabitVisible = computed(() => {
         </div>
       </div>
 
-      <!-- Hamburger Menu Button to show action buttons -->
+      <!-- Replace hamburger button with SVG image -->
       <button @click="toggleActionVisibility" class="hamburger-button">
-        <span class="line"></span>
-        <span class="line"></span>
-        <span class="line"></span>
+        <img src="https://www.svgrepo.com/show/522527/edit-3.svg" alt="Edit Icon" width="24" height="24" />
       </button>
     </div>
 
-    <!-- Habit actions: Edit, Stop, Delete (appears below the habit content in a row) -->
+    <!-- Habit actions: Edit, Stop, Delete -->
     <div v-if="isActionVisible" class="action-buttons">
       <button @click="editHabit" class="edit-button">
         {{ isEditing ? 'Save' : 'Edit' }}
@@ -107,6 +105,7 @@ const isHabitVisible = computed(() => {
     </div>
   </div>
 </template>
+
 
 <style scoped>
 /* Habit item styling */
@@ -146,14 +145,14 @@ const isHabitVisible = computed(() => {
   appearance: none;
   width: 20px;
   height: 20px;
-  border: 2px solid #4a90e2;
+  border: 2px solid #124912;
   border-radius: 4px;
   cursor: pointer;
   position: relative;
 }
 
 .habit-checkbox:checked {
-  background-color: #4a90e2;
+  background-color: #228c24;
 }
 
 .habit-checkbox:checked::after {
