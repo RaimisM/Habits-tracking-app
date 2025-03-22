@@ -1,10 +1,11 @@
 <script setup>
-import { ref, computed } from 'vue' // Make sure 'ref' is imported from 'vue'
+import { ref, computed } from 'vue'
 import { useHabitStore } from '../store/habits'
 
 const store = useHabitStore()
 const props = defineProps({
-  habit: Object, // Receive habit as prop
+  habit: Object,
+  selectedDate: String, // Accept selectedDate from parent (App.vue)
 })
 
 const isEditing = ref(false)
@@ -19,23 +20,41 @@ const removeHabit = () => {
 }
 
 const stopHabit = () => {
-  const stopDate = store.selectedDate // Use the selectedDate from the store
+  // Use the current selected date from the store as the stop date
+  const stopDate = store.selectedDate
   console.log(`Stop Habit triggered for habit ID ${props.habit.id} with stop date: ${stopDate}`); // Debug log
-  store.stopHabit(props.habit.id, stopDate); // Pass stopDate to the store
+  store.stopHabit(props.habit.id, stopDate);
 }
 
+// Add function to edit habit
 const editHabit = () => {
   if (isEditing.value) {
-    if (newName.value.trim() !== '') {
-      store.updateHabitName(props.habit.id, newName.value)
-    }
+    // Save the new name
+    store.updateHabitName(props.habit.id, newName.value)
+    isEditing.value = false
+  } else {
+    // Enter edit mode
+    isEditing.value = true
   }
-  isEditing.value = !isEditing.value
 }
 
-// Check habit visibility based on selected date and stoppedDate
+// Fix visibility logic
 const isHabitVisible = computed(() => {
-  return !(props.habit.stoppedDate && new Date(store.selectedDate) > new Date(props.habit.stoppedDate))
+  if (!props.habit.stoppedDate) {
+    // If habit is not stopped, always show it
+    return true
+  }
+  
+  // Convert dates to comparable format 
+  const selectedDateObj = new Date(store.selectedDate)
+  const stoppedDateObj = new Date(props.habit.stoppedDate)
+  
+  // Reset time parts to compare just the dates
+  selectedDateObj.setHours(0, 0, 0, 0)
+  stoppedDateObj.setHours(0, 0, 0, 0)
+  
+  // Show habit if selected date is on or before the stopped date
+  return selectedDateObj <= stoppedDateObj
 })
 </script>
 
@@ -72,6 +91,7 @@ const isHabitVisible = computed(() => {
     </div>
   </div>
 </template>
+
 
 <style scoped>
 /* Habit item styling */

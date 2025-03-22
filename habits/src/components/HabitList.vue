@@ -1,42 +1,30 @@
 <script setup>
-import { computed, onMounted } from 'vue'
+import { computed } from 'vue'
 import { useHabitStore } from '../store/habits'
 import HabitItem from './HabitItem.vue'
 
 const props = defineProps({
-  selectedDate: String, // Accept selectedDate from parent (App.vue)
+  selectedDate: String,
 })
 
 const store = useHabitStore()
 
-// Get habits based on the selected date using the store method
+// Load all habits instead of filtering them
 const habits = computed(() => {
-  return store.getHabitsForDate(props.selectedDate).filter(habit => {
-    return habit.active && (!habit.stoppedDate || new Date(props.selectedDate) <= new Date(habit.stoppedDate));
-  })
-})
-
-// Load habits from the store (e.g., from localStorage) on mount
-onMounted(() => {
-  store.loadHabits() // Load habits when the component is mounted
+  return store.habits
 })
 </script>
 
 <template>
-  <div>
-    <h2>Your habits:</h2>
-
-    <!-- Habit List with Transition -->
-    <transition-group name="fade-list" tag="div">
-      <HabitItem
-        v-for="habit in habits"
-        :key="habit.id"
-        :habit="habit"
-        :selectedDate="selectedDate"
-      />
-    </transition-group>
-
-    <!-- No habits message -->
-    <p v-if="habits.length === 0">No habits for this date.</p>
+  <div class="habits-list">
+    <div v-if="habits.length === 0" class="no-habits">
+      No habits created yet.
+    </div>
+    <HabitItem
+      v-for="habit in habits"
+      :key="habit.id"
+      :habit="habit"
+      :selectedDate="selectedDate"
+    />
   </div>
 </template>

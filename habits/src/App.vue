@@ -8,7 +8,7 @@
     <!-- Main Section -->
     <main>
       <!-- Date Navigator (DayNavigator.vue) -->
-      <DayNavigator :selectedDate="selectedDate" />
+      <DayNavigator :selectedDate="selectedDate" @dateChanged="updateSelectedDate" />
 
       <!-- Button to toggle Add Habit Form -->
       <button @click="isOpen = !isOpen" class="add-habit-button">+ Add Habit</button>
@@ -32,7 +32,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useHabitStore } from './store/habits'
 import HabitList from './components/HabitList.vue'
 import DayNavigator from './components/DayNavigator.vue'
@@ -43,6 +43,11 @@ const newHabit = ref('')
 const errorMessage = ref('')
 const selectedDate = ref(new Date().toISOString().split('T')[0]) // Default to today's date
 
+// Load habits when component mounts
+onMounted(() => {
+  store.loadHabits()
+})
+
 // Function to add a new habit
 const addHabit = () => {
   if (newHabit.value.trim() === '') {
@@ -50,10 +55,15 @@ const addHabit = () => {
     return
   }
 
-  store.addHabit(newHabit.value) // Assuming the addHabit method is correctly implemented in the store
+  store.addHabit(newHabit.value)
   newHabit.value = ''
   isOpen.value = false
   errorMessage.value = ''  // Clear error message after adding the habit
+}
+
+// Update the selected date when received from DayNavigator
+const updateSelectedDate = (newDate) => {
+  selectedDate.value = newDate
 }
 </script>
 

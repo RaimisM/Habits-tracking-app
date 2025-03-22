@@ -9,21 +9,40 @@ export const useHabitStore = defineStore('habits', {
   getters: {
     // Get habits for the selected date
     getHabitsForDate: (state) => (date) => {
-      const selectedDate = new Date(date).setHours(0, 0, 0, 0); // Normalize selected date to 00:00:00 for consistency
+      // Convert the selected date to a Date object and normalize to midnight
+      const selectedDateObj = new Date(date);
+      selectedDateObj.setHours(0, 0, 0, 0);
+      
       return state.habits.filter((habit) => {
-        const habitDate = new Date(habit.date).setHours(0, 0, 0, 0); // Normalize habit date
-        const stopDate = habit.stoppedDate ? new Date(habit.stoppedDate).setHours(0, 0, 0, 0) : null;
-    
-        // Make sure the habit should be displayed based on date range
+        // Convert the habit's creation date to a Date object
+        const habitStartDateObj = new Date(habit.date);
+        habitStartDateObj.setHours(0, 0, 0, 0);
+        
+        // If the habit has been stopped, get the stop date
+        let stopDateObj = null;
+        if (habit.stoppedDate) {
+          stopDateObj = new Date(habit.stoppedDate);
+          stopDateObj.setHours(0, 0, 0, 0);
+        }
+        
+        // FIXED LOGIC: 
+        // 1. The habit should be visible if it was created on or before the selected date
+        // 2. AND if it doesn't have a stop date OR the selected date is LESS THAN OR EQUAL TO the stop date
+        //    (this ensures the habit is visible on the stop date itself)
         return (
-          habitDate <= selectedDate && // Show habits that started before or on the selected date
-          (!stopDate || selectedDate <= stopDate) // Keep showing habits until the stop date
+          habitStartDateObj <= selectedDateObj && 
+          (!stopDateObj || selectedDateObj <= stopDateObj)
         );
       });
     },
   },
 
   actions: {
+    // Added this method to set the selected date
+    setSelectedDate(date) {
+      this.selectedDate = date;
+    },
+    
     loadHabits() {
       const storedHabits = JSON.parse(localStorage.getItem('habits')) || []
       this.habits = storedHabits
@@ -53,10 +72,11 @@ export const useHabitStore = defineStore('habits', {
     stopHabit(habitId, stoppedDate) {
       const habit = this.habits.find(h => h.id === habitId);
       if (habit) {
-        console.log(`Stopping habit ${habit.name} with stopped date ${stoppedDate}`); // Debug log
-        habit.stoppedDate = stoppedDate; // Set the stoppedDate
+        // Set the stoppedDate to the current selected date
+        habit.stoppedDate = stoppedDate;
         habit.active = false; // Set the habit as inactive
         this.saveHabits(); // Save changes
+        console.log(`Stopped habit ${habit.name} on date ${stoppedDate}`); // Debug log
       }
     },
 
