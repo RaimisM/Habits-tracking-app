@@ -9,7 +9,17 @@ export const useHabitStore = defineStore('habits', {
   getters: {
     // Get habits for the selected date
     getHabitsForDate: (state) => (date) => {
-      return state.habits.filter((habit) => habit.active && habit.date <= date)
+      const selectedDate = new Date(date).setHours(0, 0, 0, 0); // Normalize selected date to 00:00:00 for consistency
+      return state.habits.filter((habit) => {
+        const habitDate = new Date(habit.date).setHours(0, 0, 0, 0); // Normalize habit date
+        const stopDate = habit.stoppedDate ? new Date(habit.stoppedDate).setHours(0, 0, 0, 0) : null;
+    
+        // Make sure the habit should be displayed based on date range
+        return (
+          habitDate <= selectedDate && // Show habits that started before or on the selected date
+          (!stopDate || selectedDate <= stopDate) // Keep showing habits until the stop date
+        );
+      });
     },
   },
 
@@ -26,6 +36,7 @@ export const useHabitStore = defineStore('habits', {
         completed: false,
         active: true, // Default to active
         date: new Date().toISOString().split('T')[0], // Store with current date
+        stoppedDate: null, // Default to null
       }
       this.habits.push(newHabit)
       this.saveHabits()
@@ -39,11 +50,13 @@ export const useHabitStore = defineStore('habits', {
       }
     },
 
-    stopHabit(id) {
-      const habit = this.habits.find((h) => h.id === id)
+    stopHabit(habitId, stoppedDate) {
+      const habit = this.habits.find(h => h.id === habitId);
       if (habit) {
-        habit.active = false // Marks habit as stopped but retains past data
-        this.saveHabits()
+        console.log(`Stopping habit ${habit.name} with stopped date ${stoppedDate}`); // Debug log
+        habit.stoppedDate = stoppedDate; // Set the stoppedDate
+        habit.active = false; // Set the habit as inactive
+        this.saveHabits(); // Save changes
       }
     },
 

@@ -1,10 +1,10 @@
 <script setup>
+import { ref, computed } from 'vue' // Make sure 'ref' is imported from 'vue'
 import { useHabitStore } from '../store/habits'
-import { ref } from 'vue'
 
 const store = useHabitStore()
 const props = defineProps({
-  habit: Object,
+  habit: Object, // Receive habit as prop
 })
 
 const isEditing = ref(false)
@@ -19,7 +19,9 @@ const removeHabit = () => {
 }
 
 const stopHabit = () => {
-  store.stopHabit(props.habit.id)
+  const stopDate = store.selectedDate // Use the selectedDate from the store
+  console.log(`Stop Habit triggered for habit ID ${props.habit.id} with stop date: ${stopDate}`); // Debug log
+  store.stopHabit(props.habit.id, stopDate); // Pass stopDate to the store
 }
 
 const editHabit = () => {
@@ -30,10 +32,15 @@ const editHabit = () => {
   }
   isEditing.value = !isEditing.value
 }
+
+// Check habit visibility based on selected date and stoppedDate
+const isHabitVisible = computed(() => {
+  return !(props.habit.stoppedDate && new Date(store.selectedDate) > new Date(props.habit.stoppedDate))
+})
 </script>
 
 <template>
-  <div class="habit-item">
+  <div v-if="isHabitVisible" class="habit-item">
     <!-- Habit name with edit functionality -->
     <div>
       <input

@@ -1,15 +1,24 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useHabitStore } from '../store/habits'
-import HabitItem from './HabitItem.vue' // Import component
+import HabitItem from './HabitItem.vue'
+
+const props = defineProps({
+  selectedDate: String, // Accept selectedDate from parent (App.vue)
+})
 
 const store = useHabitStore()
-const selectedDate = ref(new Date().toISOString().split('T')[0])
 
-const habits = computed(() => store.getHabitsForDate(selectedDate.value))
+// Get habits based on the selected date using the store method
+const habits = computed(() => {
+  return store.getHabitsForDate(props.selectedDate).filter(habit => {
+    return habit.active && (!habit.stoppedDate || new Date(props.selectedDate) <= new Date(habit.stoppedDate));
+  })
+})
 
+// Load habits from the store (e.g., from localStorage) on mount
 onMounted(() => {
-  store.loadHabits() // Load habits on mount
+  store.loadHabits() // Load habits when the component is mounted
 })
 </script>
 
@@ -17,21 +26,17 @@ onMounted(() => {
   <div>
     <h2>Your habits:</h2>
 
-
-
+    <!-- Habit List with Transition -->
     <transition-group name="fade-list" tag="div">
-      <HabitItem v-for="habit in habits" :key="habit.id" :habit="habit" />
+      <HabitItem
+        v-for="habit in habits"
+        :key="habit.id"
+        :habit="habit"
+        :selectedDate="selectedDate"
+      />
     </transition-group>
 
-    <p v-if="habits.length === 0">No habits added yet.</p>
+    <!-- No habits message -->
+    <p v-if="habits.length === 0">No habits for this date.</p>
   </div>
 </template>
-
-<style scoped>
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-</style>
