@@ -174,7 +174,7 @@ const isHabitVisible = computed(() => {
   border: 1px solid #dddddd;
   border-radius: 4px;
   font-size: 14px;
-  width: 100%;
+  width: 90%;
 }
 
 /* Hamburger Menu Button */
