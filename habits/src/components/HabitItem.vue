@@ -10,6 +10,7 @@ const props = defineProps({
 
 const isEditing = ref(false)
 const newName = ref(props.habit.name)
+const isActionVisible = ref(false)  // New state to control the visibility of action buttons
 
 const updateHabitStatus = () => {
   store.updateHabitStatus(props.habit.id, props.habit.completed)
@@ -38,6 +39,11 @@ const editHabit = () => {
   }
 }
 
+// Add function to toggle action button visibility
+const toggleActionVisibility = () => {
+  isActionVisible.value = !isActionVisible.value;
+}
+
 // Fix visibility logic
 const isHabitVisible = computed(() => {
   if (!props.habit.stoppedDate) {
@@ -60,29 +66,39 @@ const isHabitVisible = computed(() => {
 
 <template>
   <div v-if="isHabitVisible" class="habit-item">
-    <!-- Habit name with edit functionality -->
-    <div>
-      <input
-        type="checkbox"
-        v-model="habit.completed"
-        @change="updateHabitStatus"
-        class="habit-checkbox"
-      />
-      <div>
-        <span v-if="!isEditing" :class="{ 'completed': habit.completed }">
-          {{ habit.name }}
-        </span>
+    <!-- Habit content container -->
+    <div class="habit-content">
+      <!-- Habit name with edit functionality -->
+      <div class="habit-name">
         <input
-          v-if="isEditing"
-          v-model="newName"
-          :placeholder="habit.name"
-          class="edit-input"
+          type="checkbox"
+          v-model="habit.completed"
+          @change="updateHabitStatus"
+          class="habit-checkbox"
         />
+        <div>
+          <span v-if="!isEditing" :class="{ 'completed': habit.completed }">
+            {{ habit.name }}
+          </span>
+          <input
+            v-if="isEditing"
+            v-model="newName"
+            :placeholder="habit.name"
+            class="edit-input"
+          />
+        </div>
       </div>
+
+      <!-- Hamburger Menu Button to show action buttons -->
+      <button @click="toggleActionVisibility" class="hamburger-button">
+        <span class="line"></span>
+        <span class="line"></span>
+        <span class="line"></span>
+      </button>
     </div>
 
-    <!-- Habit actions: Edit, Stop, Delete -->
-    <div class="action-buttons">
+    <!-- Habit actions: Edit, Stop, Delete (appears below the habit content in a row) -->
+    <div v-if="isActionVisible" class="action-buttons">
       <button @click="editHabit" class="edit-button">
         {{ isEditing ? 'Save' : 'Edit' }}
       </button>
@@ -92,14 +108,13 @@ const isHabitVisible = computed(() => {
   </div>
 </template>
 
-
 <style scoped>
 /* Habit item styling */
-/* Habit Item Container */
 .habit-item {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
   padding: 12px 16px;
   margin-bottom: 10px;
   background-color: #ffffff;
@@ -112,14 +127,21 @@ const isHabitVisible = computed(() => {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-/* Checkbox and Habit Name */
-.habit-item > div:first-child {
+.habit-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.habit-name {
   display: flex;
   align-items: center;
   gap: 12px;
   flex: 1;
 }
 
+/* Checkbox and Habit Name */
 .habit-checkbox {
   appearance: none;
   width: 20px;
@@ -156,10 +178,33 @@ const isHabitVisible = computed(() => {
   width: 100%;
 }
 
-/* Action Buttons */
+/* Hamburger Menu Button */
+.hamburger-button {
+  background: none;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 30px;
+  height: 20px;
+  padding: 0;
+  cursor: pointer;
+}
+
+.line {
+  width: 100%;
+  height: 3px;
+  background-color: #333;
+  border-radius: 2px;
+}
+
+/* Action Buttons - these will appear below the habit name in a row */
 .action-buttons {
   display: flex;
+  flex-direction: row;  /* Change to row to make buttons align horizontally */
   gap: 8px;
+  margin-top: 10px; /* Adds space between habit content and action buttons */
 }
 
 button {
