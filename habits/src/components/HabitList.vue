@@ -17,9 +17,7 @@ const habits = computed(() => {
 
 <template>
   <div class="habits-list">
-    <div v-if="habits.length === 0" class="no-habits">
-      No habits created yet.
-    </div>
+    <div v-if="habits.length === 0" class="no-habits">No habits created yet.</div>
     <HabitItem
       v-for="habit in habits"
       :key="habit.id"

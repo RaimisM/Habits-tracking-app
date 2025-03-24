@@ -10,21 +10,20 @@ const props = defineProps({
 
 const isEditing = ref(false)
 const newName = ref(props.habit.name)
-const isActionVisible = ref(false)  // State to control the visibility of action buttons
-const isStopped = computed(() => !!props.habit.stoppedDate); // Add a reactive reference to track if habit is stopped
+const isActionVisible = ref(false) // State to control the visibility of action buttons
+const isStopped = computed(() => !!props.habit.stoppedDate) // Add a reactive reference to track if habit is stopped
 
 // Computed property to determine if habit is completed for the selected date
 const isCompletedForSelectedDate = computed(() => {
-  return props.habit.completedDates && 
-         props.habit.completedDates.includes(store.selectedDate);
+  return props.habit.completedDates && props.habit.completedDates.includes(store.selectedDate)
 })
 
 // Update habit completion status for the specific date
 const updateHabitStatus = () => {
   store.updateHabitStatusForDate(
-    props.habit.id, 
-    store.selectedDate, 
-    !isCompletedForSelectedDate.value
+    props.habit.id,
+    store.selectedDate,
+    !isCompletedForSelectedDate.value,
   )
 }
 
@@ -36,8 +35,8 @@ const removeHabit = () => {
 // Stop the habit
 const stopHabit = () => {
   const stopDate = store.selectedDate
-  console.log(`Stop Habit triggered for habit ID ${props.habit.id} with stop date: ${stopDate}`);
-  store.stopHabit(props.habit.id, stopDate);
+  console.log(`Stop Habit triggered for habit ID ${props.habit.id} with stop date: ${stopDate}`)
+  store.stopHabit(props.habit.id, stopDate)
   isStopped.value = true // Set the habit as stopped when the button is pressed
 }
 
@@ -53,7 +52,7 @@ const editHabit = () => {
 
 // Toggle visibility of action buttons
 const toggleActionVisibility = () => {
-  isActionVisible.value = !isActionVisible.value;
+  isActionVisible.value = !isActionVisible.value
 }
 
 // Visibility logic to show habit based on stop date
@@ -71,34 +70,34 @@ const isHabitVisible = computed(() => {
 // Computed property to determine the current streak and message
 const streakMessage = computed(() => {
   if (!isCompletedForSelectedDate.value) {
-    return '';  // Don't show streak message if habit is not completed today
+    return '' // Don't show streak message if habit is not completed today
   }
 
   // Get the last completed dates
-  const completedDates = props.habit.completedDates.sort((a, b) => new Date(b) - new Date(a));
-  
+  const completedDates = props.habit.completedDates.sort((a, b) => new Date(b) - new Date(a))
+
   // Check for streak
-  let streak = 1;  // Current streak starts at 1 because we know the habit is completed today
+  let streak = 1 // Current streak starts at 1 because we know the habit is completed today
   for (let i = 1; i < completedDates.length; i++) {
-    const diff = (new Date(completedDates[i - 1]) - new Date(completedDates[i])) / (1000 * 3600 * 24); // Difference in days
+    const diff =
+      (new Date(completedDates[i - 1]) - new Date(completedDates[i])) / (1000 * 3600 * 24) // Difference in days
     if (diff === 1) {
-      streak++;
+      streak++
     } else {
-      break; // If the difference is not 1, the streak is broken
+      break // If the difference is not 1, the streak is broken
     }
   }
-  
+
   // Only show message if streak is 3 or more days
   if (streak >= 3) {
-    return `Congrats! You've completed your habit for ${streak} consecutive days!`;
+    return `Congrats! You've completed your habit for ${streak} consecutive days!`
   }
-  return '';  // Return empty if streak is less than 3 days
+  return '' // Return empty if streak is less than 3 days
 })
 </script>
 
-
 <template>
-  <div v-if="isHabitVisible" :class="{'habit-item': true, 'stopped': isStopped}">
+  <div v-if="isHabitVisible" :class="{ 'habit-item': true, stopped: isStopped }">
     <!-- Habit content container -->
     <div class="habit-content">
       <div class="habit-name">
@@ -109,20 +108,20 @@ const streakMessage = computed(() => {
           class="habit-checkbox"
         />
         <div>
-          <span v-if="!isEditing" :class="{ 'completed': isCompletedForSelectedDate }">
+          <span v-if="!isEditing" :class="{ completed: isCompletedForSelectedDate }">
             {{ habit.name }}
           </span>
-          <input
-            v-if="isEditing"
-            v-model="newName"
-            :placeholder="habit.name"
-            class="edit-input"
-          />
+          <input v-if="isEditing" v-model="newName" :placeholder="habit.name" class="edit-input" />
         </div>
       </div>
 
       <button @click="toggleActionVisibility" class="hamburger-button">
-        <img src="https://www.svgrepo.com/show/522527/edit-3.svg" alt="Edit Icon" width="24" height="24" />
+        <img
+          src="https://www.svgrepo.com/show/522527/edit-3.svg"
+          alt="Edit Icon"
+          width="24"
+          height="24"
+        />
       </button>
     </div>
 
@@ -141,7 +140,6 @@ const streakMessage = computed(() => {
     </div>
   </div>
 </template>
-
 
 <style scoped>
 .streak-message {
@@ -247,7 +245,7 @@ const streakMessage = computed(() => {
 /* Action Buttons - these will appear below the habit name in a row */
 .action-buttons {
   display: flex;
-  flex-direction: row;  /* Change to row to make buttons align horizontally */
+  flex-direction: row; /* Change to row to make buttons align horizontally */
   gap: 8px;
   margin-top: 10px; /* Adds space between habit content and action buttons */
 }

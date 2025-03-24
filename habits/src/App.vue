@@ -32,44 +32,43 @@ const isOpen = ref(false)
 const newHabit = ref('')
 const errorMessage = ref('')
 const selectedDate = ref(new Date().toISOString().split('T')[0])
-store.loadStoppedHabitState();
+store.loadStoppedHabitState()
 
 onMounted(() => {
-  console.log("App mounted - Loading habits");
+  console.log('App mounted - Loading habits')
   store.loadHabits()
-  store.loadStoppedHabitState();
+  store.loadStoppedHabitState()
 })
 
 const toggleHabitForm = () => {
-  console.log("Toggling add habit form");
-  isOpen.value = !isOpen.value;
+  console.log('Toggling add habit form')
+  isOpen.value = !isOpen.value
 }
 
 const addHabit = () => {
   if (newHabit.value.trim() === '') {
-    errorMessage.value = 'Habit name cannot be empty!';
-    console.log("Error: Habit name cannot be empty");
-    return;
+    errorMessage.value = 'Habit name cannot be empty!'
+    console.log('Error: Habit name cannot be empty')
+    return
   }
 
-  console.log(`Adding new habit: ${newHabit.value}`);
-  store.addHabit(newHabit.value);
-  newHabit.value = '';
-  isOpen.value = false;
-  errorMessage.value = '';
+  console.log(`Adding new habit: ${newHabit.value}`)
+  store.addHabit(newHabit.value)
+  newHabit.value = ''
+  isOpen.value = false
+  errorMessage.value = ''
 }
 
 const updateSelectedDate = (newDate) => {
-  console.log(`Selected date changed: ${newDate}`);
-  selectedDate.value = newDate;
+  console.log(`Selected date changed: ${newDate}`)
+  selectedDate.value = newDate
 }
 
 // Log when selectedDate changes
 watchEffect(() => {
-  console.log(`Selected date: ${selectedDate.value}`);
+  console.log(`Selected date: ${selectedDate.value}`)
 })
 </script>
-
 
 <style scoped>
 #app {
@@ -84,7 +83,7 @@ header {
 
 .add-habit-button {
   padding: 10px 20px;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   cursor: pointer;
@@ -107,7 +106,8 @@ header {
   border-radius: 4px;
 }
 
-.add-button, .cancel-button {
+.add-button,
+.cancel-button {
   padding: 8px 16px;
   margin: 5px;
   border-radius: 4px;
@@ -115,7 +115,7 @@ header {
 }
 
 .add-button {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
 }

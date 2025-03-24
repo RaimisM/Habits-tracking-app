@@ -29,10 +29,7 @@ const addHabit = () => {
     <div v-if="isOpen" class="modal">
       <div class="modal-content">
         <h2>New Habit</h2>
-        <input
-          v-model="newHabit"
-          placeholder="Enter habit name"
-        />
+        <input v-model="newHabit" placeholder="Enter habit name" />
         <div>
           <button @click="isOpen = false">Cancel</button>
           <button @click="addHabit">Add</button>
