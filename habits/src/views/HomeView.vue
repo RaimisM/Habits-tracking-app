@@ -4,7 +4,7 @@ import HabitList from '../components/HabitList.vue'
 </script>
 
 <template>
-  <div class="p-4 max-w-md mx-auto">
+  <div>
     <DayNavigator />
     <HabitList />
   </div>
