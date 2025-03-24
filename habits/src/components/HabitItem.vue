@@ -11,6 +11,7 @@ const props = defineProps({
 const isEditing = ref(false)
 const newName = ref(props.habit.name)
 const isActionVisible = ref(false)  // State to control the visibility of action buttons
+const isStopped = computed(() => !!props.habit.stoppedDate); // Add a reactive reference to track if habit is stopped
 
 // Computed property to determine if habit is completed for the selected date
 const isCompletedForSelectedDate = computed(() => {
@@ -37,6 +38,7 @@ const stopHabit = () => {
   const stopDate = store.selectedDate
   console.log(`Stop Habit triggered for habit ID ${props.habit.id} with stop date: ${stopDate}`);
   store.stopHabit(props.habit.id, stopDate);
+  isStopped.value = true // Set the habit as stopped when the button is pressed
 }
 
 // Edit habit
@@ -94,8 +96,9 @@ const streakMessage = computed(() => {
 })
 </script>
 
+
 <template>
-  <div v-if="isHabitVisible" class="habit-item">
+  <div v-if="isHabitVisible" :class="{'habit-item': true, 'stopped': isStopped}">
     <!-- Habit content container -->
     <div class="habit-content">
       <div class="habit-name">
@@ -139,11 +142,16 @@ const streakMessage = computed(() => {
   </div>
 </template>
 
+
 <style scoped>
 .streak-message {
   color: green;
   font-weight: bold;
   margin-top: 10px;
+}
+
+.habit-item.stopped {
+  background-color: rgb(199, 198, 198); /* Change the background color when habit is stopped */
 }
 
 /* Habit item styling */

@@ -32,10 +32,12 @@ const isOpen = ref(false)
 const newHabit = ref('')
 const errorMessage = ref('')
 const selectedDate = ref(new Date().toISOString().split('T')[0])
+store.loadStoppedHabitState();
 
 onMounted(() => {
   console.log("App mounted - Loading habits");
   store.loadHabits()
+  store.loadStoppedHabitState();
 })
 
 const toggleHabitForm = () => {
