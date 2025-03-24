@@ -1,29 +1,29 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useHabitStore } from '../store/habits'
 
 const store = useHabitStore()
 const props = defineProps({
   habit: Object,
-  selectedDate: String, // Accept selectedDate from parent (App.vue)
+  selectedDate: String,
 })
 
 const isEditing = ref(false)
 const newName = ref(props.habit.name)
-const isActionVisible = ref(false) // State to control the visibility of action buttons
-const isStopped = computed(() => !!props.habit.stoppedDate) // Add a reactive reference to track if habit is stopped
+const isActionVisible = ref(false)
+const isStopped = computed(() => !!props.habit.stoppedDate)
 
 // Computed property to determine if habit is completed for the selected date
 const isCompletedForSelectedDate = computed(() => {
   return props.habit.completedDates && props.habit.completedDates.includes(store.selectedDate)
 })
 
-// Update habit completion status for the specific date
+// Update habit completion status
 const updateHabitStatus = () => {
   store.updateHabitStatusForDate(
     props.habit.id,
     store.selectedDate,
-    !isCompletedForSelectedDate.value,
+    !isCompletedForSelectedDate.value
   )
 }
 
@@ -35,9 +35,7 @@ const removeHabit = () => {
 // Stop the habit
 const stopHabit = () => {
   const stopDate = store.selectedDate
-  console.log(`Stop Habit triggered for habit ID ${props.habit.id} with stop date: ${stopDate}`)
   store.stopHabit(props.habit.id, stopDate)
-  isStopped.value = true // Set the habit as stopped when the button is pressed
 }
 
 // Edit habit
@@ -55,6 +53,21 @@ const toggleActionVisibility = () => {
   isActionVisible.value = !isActionVisible.value
 }
 
+// Close menu when clicking outside
+const handleClickOutside = (event) => {
+  if (!event.target.closest('.habit-item')) {
+    isActionVisible.value = false
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
+
 // Visibility logic to show habit based on stop date
 const isHabitVisible = computed(() => {
   if (!props.habit.stoppedDate) {
@@ -64,41 +77,33 @@ const isHabitVisible = computed(() => {
   const stoppedDateObj = new Date(props.habit.stoppedDate)
   selectedDateObj.setHours(0, 0, 0, 0)
   stoppedDateObj.setHours(0, 0, 0, 0)
-  return selectedDateObj <= stoppedDateObj // This is correct - keep the <= operator
+  return selectedDateObj <= stoppedDateObj
 })
 
-// Computed property to determine the current streak and message
+// Computed property for streak message
 const streakMessage = computed(() => {
   if (!isCompletedForSelectedDate.value) {
-    return '' // Don't show streak message if habit is not completed today
+    return ''
   }
 
-  // Get the last completed dates
   const completedDates = props.habit.completedDates.sort((a, b) => new Date(b) - new Date(a))
-
-  // Check for streak
-  let streak = 1 // Current streak starts at 1 because we know the habit is completed today
+  let streak = 1
   for (let i = 1; i < completedDates.length; i++) {
     const diff =
-      (new Date(completedDates[i - 1]) - new Date(completedDates[i])) / (1000 * 3600 * 24) // Difference in days
+      (new Date(completedDates[i - 1]) - new Date(completedDates[i])) / (1000 * 3600 * 24)
     if (diff === 1) {
       streak++
     } else {
-      break // If the difference is not 1, the streak is broken
+      break
     }
   }
 
-  // Only show message if streak is 3 or more days
-  if (streak >= 3) {
-    return `Congrats! You've completed your habit for ${streak} consecutive days!`
-  }
-  return '' // Return empty if streak is less than 3 days
+  return streak >= 3 ? `Congrats! You've completed your habit for ${streak} consecutive days!` : ''
 })
 </script>
 
 <template>
   <div v-if="isHabitVisible" :class="{ 'habit-item': true, stopped: isStopped }">
-    <!-- Habit content container -->
     <div class="habit-content">
       <div class="habit-name">
         <input
@@ -125,7 +130,6 @@ const streakMessage = computed(() => {
       </button>
     </div>
 
-    <!-- Habit actions: Edit, Stop, Delete -->
     <div v-if="isActionVisible" class="action-buttons">
       <button @click="editHabit" class="edit-button">
         {{ isEditing ? 'Save' : 'Edit' }}
@@ -134,12 +138,12 @@ const streakMessage = computed(() => {
       <button @click="removeHabit" class="delete-button">Delete</button>
     </div>
 
-    <!-- Display streak message only if streak is 3 or more days -->
     <div v-if="streakMessage" class="streak-message">
       <span>{{ streakMessage }}</span>
     </div>
   </div>
 </template>
+
 
 <style scoped>
 .streak-message {
@@ -175,6 +179,7 @@ const streakMessage = computed(() => {
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  max-width: 400px;
 }
 
 .habit-name {
@@ -182,6 +187,7 @@ const streakMessage = computed(() => {
   align-items: center;
   gap: 12px;
   flex: 1;
+  min-width: 0; /* Ensures the container does not shrink unpredictably */
 }
 
 /* Checkbox and Habit Name */
@@ -193,6 +199,7 @@ const streakMessage = computed(() => {
   border-radius: 4px;
   cursor: pointer;
   position: relative;
+  flex-shrink: 0;
 }
 
 .habit-checkbox:checked {
@@ -209,16 +216,23 @@ const streakMessage = computed(() => {
 }
 
 .completed {
-  text-decoration: line-through;
-  color: #888888;
+  color: #424242;
+  font-style: italic;
+}
+
+.habit-name div {
+  flex-grow: 1;
+  overflow: hidden;
+  white-space: normal; /* Allows text to wrap */
+  word-break: break-word; /* Ensures words break if needed */
 }
 
 .edit-input {
-  padding: 6px 10px;
-  border: 1px solid #dddddd;
-  border-radius: 4px;
-  font-size: 14px;
-  width: 90%;
+  width: 100%;
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 
 /* Hamburger Menu Button */
