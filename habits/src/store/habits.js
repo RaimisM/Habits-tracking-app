@@ -35,6 +35,12 @@ export const useHabitStore = defineStore('habits', {
         );
       });
     },
+    
+    // New getter to check if a habit is completed for a specific date
+    isHabitCompletedForDate: (state) => (habitId, date) => {
+      const habit = state.habits.find(h => h.id === habitId);
+      return habit && habit.completedDates && habit.completedDates.includes(date);
+    },
   },
 
   actions: {
@@ -45,14 +51,30 @@ export const useHabitStore = defineStore('habits', {
     
     loadHabits() {
       const storedHabits = JSON.parse(localStorage.getItem('habits')) || []
-      this.habits = storedHabits
+      
+      // Migration: convert old habits to new format with completedDates array
+      storedHabits.forEach(habit => {
+        if (!habit.completedDates) {
+          habit.completedDates = [];
+          // If the habit was previously marked as completed, add the current date
+          // to maintain backward compatibility
+          if (habit.completed) {
+            habit.completedDates.push(this.selectedDate);
+          }
+          // Remove the old completed property
+          delete habit.completed;
+        }
+      });
+      
+      this.habits = storedHabits;
+      this.saveHabits(); // Save migrated data
     },
 
     addHabit(habitName) {
       const newHabit = {
         id: Date.now(),
         name: habitName,
-        completed: false,
+        completedDates: [], // Array to store dates when habit was completed
         active: true, // Default to active
         date: new Date().toISOString().split('T')[0], // Store with current date
         stoppedDate: null, // Default to null
@@ -85,12 +107,33 @@ export const useHabitStore = defineStore('habits', {
       this.saveHabits()
     },
 
-    updateHabitStatus(id, completed) {
-      const habit = this.habits.find((h) => h.id === id)
+    // New method to update habit completion status for a specific date
+    updateHabitStatusForDate(habitId, date, isCompleted) {
+      const habit = this.habits.find(h => h.id === habitId);
       if (habit) {
-        habit.completed = completed
-        this.saveHabits()
+        // Initialize completedDates array if it doesn't exist
+        if (!habit.completedDates) {
+          habit.completedDates = [];
+        }
+        
+        // Get index of date in completedDates array (if it exists)
+        const dateIndex = habit.completedDates.indexOf(date);
+        
+        if (isCompleted && dateIndex === -1) {
+          // Add date to completedDates if it should be completed and isn't already
+          habit.completedDates.push(date);
+        } else if (!isCompleted && dateIndex !== -1) {
+          // Remove date from completedDates if it shouldn't be completed but is
+          habit.completedDates.splice(dateIndex, 1);
+        }
+        
+        this.saveHabits();
       }
+    },
+    
+    // Keep the old method for backward compatibility, but implement it using the new method
+    updateHabitStatus(id, completed) {
+      this.updateHabitStatusForDate(id, this.selectedDate, completed);
     },
 
     saveHabits() {

@@ -10,10 +10,22 @@ const props = defineProps({
 
 const isEditing = ref(false)
 const newName = ref(props.habit.name)
-const isActionVisible = ref(false)  // New state to control the visibility of action buttons
+const isActionVisible = ref(false)  // State to control the visibility of action buttons
 
+// Computed property to determine if habit is completed for the selected date
+const isCompletedForSelectedDate = computed(() => {
+  // Check if the habit's completedDates array contains the current selected date
+  return props.habit.completedDates && 
+         props.habit.completedDates.includes(store.selectedDate);
+})
+
+// Update habit completion status for the specific date
 const updateHabitStatus = () => {
-  store.updateHabitStatus(props.habit.id, props.habit.completed)
+  store.updateHabitStatusForDate(
+    props.habit.id, 
+    store.selectedDate, 
+    !isCompletedForSelectedDate.value
+  )
 }
 
 const removeHabit = () => {
@@ -27,7 +39,7 @@ const stopHabit = () => {
   store.stopHabit(props.habit.id, stopDate);
 }
 
-// Add function to edit habit
+// Function to edit habit
 const editHabit = () => {
   if (isEditing.value) {
     // Save the new name
@@ -39,12 +51,12 @@ const editHabit = () => {
   }
 }
 
-// Add function to toggle action button visibility
+// Function to toggle action button visibility
 const toggleActionVisibility = () => {
   isActionVisible.value = !isActionVisible.value;
 }
 
-// Fix visibility logic
+// Visibility logic
 const isHabitVisible = computed(() => {
   if (!props.habit.stoppedDate) {
     // If habit is not stopped, always show it
@@ -72,12 +84,12 @@ const isHabitVisible = computed(() => {
       <div class="habit-name">
         <input
           type="checkbox"
-          v-model="habit.completed"
+          :checked="isCompletedForSelectedDate"
           @change="updateHabitStatus"
           class="habit-checkbox"
         />
         <div>
-          <span v-if="!isEditing" :class="{ 'completed': habit.completed }">
+          <span v-if="!isEditing" :class="{ 'completed': isCompletedForSelectedDate }">
             {{ habit.name }}
           </span>
           <input
