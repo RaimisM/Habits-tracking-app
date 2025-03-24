@@ -9,9 +9,9 @@ const props = defineProps({
 
 const store = useHabitStore()
 
-// Get habits filtered by the selected date
+// Load all habits instead of filtering them
 const habits = computed(() => {
-  return store.getHabitsForDate(props.selectedDate)
+  return store.habits
 })
 </script>
 
