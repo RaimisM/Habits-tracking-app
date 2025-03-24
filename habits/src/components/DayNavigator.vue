@@ -9,7 +9,7 @@ const store = useHabitStore()
 
 const today = dayjs().format('YYYY-MM-DD')
 
-// Get selected date from store
+// Get selected date
 const selectedDate = computed({
   get: () => store.selectedDate,
   set: (newDate) => {
@@ -22,7 +22,7 @@ const changeDay = (days) => {
   const newDate = dayjs(selectedDate.value).add(days, 'day').format('YYYY-MM-DD')
   if (dayjs(newDate).isAfter(today)) return // Prevent future dates
 
-  selectedDate.value = newDate // Update store
+  selectedDate.value = newDate
   router.push(`/day/${newDate}`)
 }
 </script>

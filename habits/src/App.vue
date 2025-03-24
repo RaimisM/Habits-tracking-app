@@ -64,7 +64,6 @@ const updateSelectedDate = (newDate) => {
   selectedDate.value = newDate
 }
 
-// Log when selectedDate changes
 watchEffect(() => {
   console.log(`Selected date: ${selectedDate.value}`)
 })

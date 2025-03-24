@@ -15,10 +15,10 @@ const addHabit = () => {
   }
 
   store.addHabit(newHabit.value)
-  console.log('Habits after adding:', store.habits) // Log updated habits
+  console.log('Habits after adding:', store.habits)
   newHabit.value = ''
   isOpen.value = false
-  errorMessage.value = '' // Clear error message
+  errorMessage.value = ''
 }
 </script>
 

@@ -13,7 +13,7 @@ const newName = ref(props.habit.name)
 const isActionVisible = ref(false)
 const isStopped = computed(() => !!props.habit.stoppedDate)
 
-// Computed property to determine if habit is completed for the selected date
+// is habit completed for the selected date
 const isCompletedForSelectedDate = computed(() => {
   return props.habit.completedDates && props.habit.completedDates.includes(store.selectedDate)
 })
@@ -23,7 +23,7 @@ const updateHabitStatus = () => {
   store.updateHabitStatusForDate(
     props.habit.id,
     store.selectedDate,
-    !isCompletedForSelectedDate.value
+    !isCompletedForSelectedDate.value,
   )
 }
 
@@ -68,7 +68,7 @@ onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)
 })
 
-// Visibility logic to show habit based on stop date
+// Visibility logic
 const isHabitVisible = computed(() => {
   if (!props.habit.stoppedDate) {
     return true
@@ -80,7 +80,7 @@ const isHabitVisible = computed(() => {
   return selectedDateObj <= stoppedDateObj
 })
 
-// Computed property for streak message
+// streak message
 const streakMessage = computed(() => {
   if (!isCompletedForSelectedDate.value) {
     return ''
@@ -144,7 +144,6 @@ const streakMessage = computed(() => {
   </div>
 </template>
 
-
 <style scoped>
 .streak-message {
   color: green;
@@ -153,7 +152,7 @@ const streakMessage = computed(() => {
 }
 
 .habit-item.stopped {
-  background-color: rgb(199, 198, 198); /* Change the background color when habit is stopped */
+  background-color: rgb(198, 199, 199);
 }
 
 /* Habit item styling */
@@ -187,7 +186,7 @@ const streakMessage = computed(() => {
   align-items: center;
   gap: 12px;
   flex: 1;
-  min-width: 0; /* Ensures the container does not shrink unpredictably */
+  min-width: 0;
 }
 
 /* Checkbox and Habit Name */
@@ -223,8 +222,8 @@ const streakMessage = computed(() => {
 .habit-name div {
   flex-grow: 1;
   overflow: hidden;
-  white-space: normal; /* Allows text to wrap */
-  word-break: break-word; /* Ensures words break if needed */
+  white-space: normal;
+  word-break: break-word;
 }
 
 .edit-input {
@@ -256,12 +255,11 @@ const streakMessage = computed(() => {
   border-radius: 2px;
 }
 
-/* Action Buttons - these will appear below the habit name in a row */
 .action-buttons {
   display: flex;
-  flex-direction: row; /* Change to row to make buttons align horizontally */
+  flex-direction: row;
   gap: 8px;
-  margin-top: 10px; /* Adds space between habit content and action buttons */
+  margin-top: 10px;
 }
 
 button {

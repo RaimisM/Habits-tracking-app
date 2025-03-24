@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 export const useHabitStore = defineStore('habits', {
   state: () => ({
     habits: [],
-    selectedDate: new Date().toISOString().split('T')[0], // Store date as a string (yyyy-mm-dd)
+    selectedDate: new Date().toISOString().split('T')[0],
   }),
 
   getters: {
@@ -47,7 +47,7 @@ export const useHabitStore = defineStore('habits', {
       let currentDate = new Date(targetDate)
 
       if (!habit.completedDates.includes(upToDate)) {
-        return 0 // If the target date isn't completed, streak is 0
+        return 0
       }
 
       while (true) {
@@ -179,10 +179,7 @@ export const useHabitStore = defineStore('habits', {
         habit.stoppedDate = stoppedDate
         habit.active = false
         this.saveHabits()
-
-        // Save stopped state in localStorage to persist it across reloads
         localStorage.setItem(`habit-${habitId}-stopped`, stoppedDate)
-
         console.log(`Stopped habit ${habit.name} on date ${stoppedDate}`)
       }
     },

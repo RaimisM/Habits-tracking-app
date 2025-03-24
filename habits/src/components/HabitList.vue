@@ -9,7 +9,7 @@ const props = defineProps({
 
 const store = useHabitStore()
 
-// Load all habits instead of filtering them
+// Load all habits
 const habits = computed(() => {
   return store.habits
 })

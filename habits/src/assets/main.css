@@ -4,7 +4,7 @@ body {
   margin: 0;
   padding: 0;
   background-image: url('./bg.jpg');
-  color: #0a3589; /* Dark text */
+  color: #0a3589;
   line-height: 1.6;
   display: flex;
   justify-content: center;
