@@ -98,7 +98,7 @@ const streakMessage = computed(() => {
     }
   }
 
-  return streak >= 3 ? `Congrats! You've completed your habit for ${streak} consecutive days!` : ''
+  return streak >= 3 ? `You've completed your habit for ${streak} consecutive days!` : ''
 })
 </script>
 
