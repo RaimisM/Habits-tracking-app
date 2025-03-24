@@ -1,38 +1,28 @@
 <template>
   <div id="app">
-    <!-- App Header -->
     <header>
       <h1>Habit Tracker</h1>
     </header>
 
-    <!-- Main Section -->
     <main>
-      <!-- Date Navigator (DayNavigator.vue) -->
       <DayNavigator :selectedDate="selectedDate" @dateChanged="updateSelectedDate" />
 
-      <!-- Button to toggle Add Habit Form -->
-      <button @click="isOpen = !isOpen" class="add-habit-button">+ Add Habit</button>
+      <button @click="toggleHabitForm" class="add-habit-button">+ Add Habit</button>
 
-      <!-- Add Habit Form -->
       <div v-if="isOpen" class="add-habit-form">
-        <input
-          v-model="newHabit"
-          placeholder="Enter habit name"
-          class="input-field"
-        />
+        <input v-model="newHabit" placeholder="Enter habit name" class="input-field" />
         <button @click="addHabit" class="add-button">Add Habit</button>
-        <button @click="isOpen = false" class="cancel-button">Cancel</button>
+        <button @click="toggleHabitForm" class="cancel-button">Cancel</button>
         <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
       </div>
 
-      <!-- Habit List Component -->
       <HabitList :selectedDate="selectedDate" />
     </main>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watchEffect } from 'vue'
 import { useHabitStore } from './store/habits'
 import HabitList from './components/HabitList.vue'
 import DayNavigator from './components/DayNavigator.vue'
@@ -41,31 +31,43 @@ const store = useHabitStore()
 const isOpen = ref(false)
 const newHabit = ref('')
 const errorMessage = ref('')
-const selectedDate = ref(new Date().toISOString().split('T')[0]) // Default to today's date
+const selectedDate = ref(new Date().toISOString().split('T')[0])
 
-// Load habits when component mounts
 onMounted(() => {
+  console.log("App mounted - Loading habits");
   store.loadHabits()
 })
 
-// Function to add a new habit
+const toggleHabitForm = () => {
+  console.log("Toggling add habit form");
+  isOpen.value = !isOpen.value;
+}
+
 const addHabit = () => {
   if (newHabit.value.trim() === '') {
-    errorMessage.value = 'Habit name cannot be empty!'
-    return
+    errorMessage.value = 'Habit name cannot be empty!';
+    console.log("Error: Habit name cannot be empty");
+    return;
   }
 
-  store.addHabit(newHabit.value)
-  newHabit.value = ''
-  isOpen.value = false
-  errorMessage.value = ''  // Clear error message after adding the habit
+  console.log(`Adding new habit: ${newHabit.value}`);
+  store.addHabit(newHabit.value);
+  newHabit.value = '';
+  isOpen.value = false;
+  errorMessage.value = '';
 }
 
-// Update the selected date when received from DayNavigator
 const updateSelectedDate = (newDate) => {
-  selectedDate.value = newDate
+  console.log(`Selected date changed: ${newDate}`);
+  selectedDate.value = newDate;
 }
+
+// Log when selectedDate changes
+watchEffect(() => {
+  console.log(`Selected date: ${selectedDate.value}`);
+})
 </script>
+
 
 <style scoped>
 #app {

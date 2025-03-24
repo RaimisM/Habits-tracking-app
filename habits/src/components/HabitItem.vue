@@ -14,7 +14,6 @@ const isActionVisible = ref(false)  // State to control the visibility of action
 
 // Computed property to determine if habit is completed for the selected date
 const isCompletedForSelectedDate = computed(() => {
-  // Check if the habit's completedDates array contains the current selected date
   return props.habit.completedDates && 
          props.habit.completedDates.includes(store.selectedDate);
 })
@@ -28,51 +27,70 @@ const updateHabitStatus = () => {
   )
 }
 
+// Remove habit from the list
 const removeHabit = () => {
   store.removeHabit(props.habit.id)
 }
 
+// Stop the habit
 const stopHabit = () => {
-  // Use the current selected date from the store as the stop date
   const stopDate = store.selectedDate
-  console.log(`Stop Habit triggered for habit ID ${props.habit.id} with stop date: ${stopDate}`); // Debug log
+  console.log(`Stop Habit triggered for habit ID ${props.habit.id} with stop date: ${stopDate}`);
   store.stopHabit(props.habit.id, stopDate);
 }
 
-// Function to edit habit
+// Edit habit
 const editHabit = () => {
   if (isEditing.value) {
-    // Save the new name
     store.updateHabitName(props.habit.id, newName.value)
     isEditing.value = false
   } else {
-    // Enter edit mode
     isEditing.value = true
   }
 }
 
-// Function to toggle action button visibility
+// Toggle visibility of action buttons
 const toggleActionVisibility = () => {
   isActionVisible.value = !isActionVisible.value;
 }
 
-// Visibility logic
+// Visibility logic to show habit based on stop date
 const isHabitVisible = computed(() => {
   if (!props.habit.stoppedDate) {
-    // If habit is not stopped, always show it
     return true
   }
-  
-  // Convert dates to comparable format 
   const selectedDateObj = new Date(store.selectedDate)
   const stoppedDateObj = new Date(props.habit.stoppedDate)
-  
-  // Reset time parts to compare just the dates
   selectedDateObj.setHours(0, 0, 0, 0)
   stoppedDateObj.setHours(0, 0, 0, 0)
-  
-  // Show habit if selected date is on or before the stopped date
   return selectedDateObj <= stoppedDateObj
+})
+
+// Computed property to determine the current streak and message
+const streakMessage = computed(() => {
+  if (!isCompletedForSelectedDate.value) {
+    return '';  // Don't show streak message if habit is not completed today
+  }
+
+  // Get the last completed dates
+  const completedDates = props.habit.completedDates.sort((a, b) => new Date(b) - new Date(a));
+  
+  // Check for streak
+  let streak = 1;  // Current streak starts at 1 because we know the habit is completed today
+  for (let i = 1; i < completedDates.length; i++) {
+    const diff = (new Date(completedDates[i - 1]) - new Date(completedDates[i])) / (1000 * 3600 * 24); // Difference in days
+    if (diff === 1) {
+      streak++;
+    } else {
+      break; // If the difference is not 1, the streak is broken
+    }
+  }
+  
+  // Only show message if streak is 3 or more days
+  if (streak >= 3) {
+    return `Congrats! You've completed your habit for ${streak} consecutive days!`;
+  }
+  return '';  // Return empty if streak is less than 3 days
 })
 </script>
 
@@ -80,7 +98,6 @@ const isHabitVisible = computed(() => {
   <div v-if="isHabitVisible" class="habit-item">
     <!-- Habit content container -->
     <div class="habit-content">
-      <!-- Habit name with edit functionality -->
       <div class="habit-name">
         <input
           type="checkbox"
@@ -101,7 +118,6 @@ const isHabitVisible = computed(() => {
         </div>
       </div>
 
-      <!-- Replace hamburger button with SVG image -->
       <button @click="toggleActionVisibility" class="hamburger-button">
         <img src="https://www.svgrepo.com/show/522527/edit-3.svg" alt="Edit Icon" width="24" height="24" />
       </button>
@@ -115,11 +131,21 @@ const isHabitVisible = computed(() => {
       <button @click="stopHabit" class="stop-button">Stop</button>
       <button @click="removeHabit" class="delete-button">Delete</button>
     </div>
+
+    <!-- Display streak message only if streak is 3 or more days -->
+    <div v-if="streakMessage" class="streak-message">
+      <span>{{ streakMessage }}</span>
+    </div>
   </div>
 </template>
 
-
 <style scoped>
+.streak-message {
+  color: green;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
 /* Habit item styling */
 .habit-item {
   display: flex;

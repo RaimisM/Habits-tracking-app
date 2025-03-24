@@ -41,6 +41,120 @@ export const useHabitStore = defineStore('habits', {
       const habit = state.habits.find(h => h.id === habitId);
       return habit && habit.completedDates && habit.completedDates.includes(date);
     },
+
+    // Get current streak for a habit up to a specific date
+    getCurrentStreak: (state) => (habitId, upToDate) => {
+      const habit = state.habits.find(h => h.id === habitId);
+      if (!habit || !habit.completedDates || habit.completedDates.length === 0) {
+        return 0;
+      }
+
+      // Sort completed dates
+      const sortedDates = [...habit.completedDates].sort();
+      
+      // Convert upToDate to Date object
+      const targetDate = new Date(upToDate);
+      targetDate.setHours(0, 0, 0, 0);
+      
+      let streak = 0;
+      let currentDate = new Date(targetDate);
+      
+      // Check if the target date itself is completed
+      if (!habit.completedDates.includes(upToDate)) {
+        return 0; // If the target date isn't completed, streak is 0
+      }
+      
+      // Count backward from target date to find consecutive completed days
+      while (true) {
+        const dateString = currentDate.toISOString().split('T')[0];
+        
+        // If this date is completed, increase streak
+        if (habit.completedDates.includes(dateString)) {
+          streak++;
+          
+          // Move to previous day
+          currentDate.setDate(currentDate.getDate() - 1);
+          
+          // Check if we've gone before habit start date
+          const habitStartDate = new Date(habit.date);
+          habitStartDate.setHours(0, 0, 0, 0);
+          if (currentDate < habitStartDate) {
+            break;
+          }
+        } else {
+          // Streak is broken
+          break;
+        }
+      }
+      
+      return streak;
+    },
+    
+    // Get the longest streak for a habit
+    getLongestStreak: (state) => (habitId) => {
+      const habit = state.habits.find(h => h.id === habitId);
+      if (!habit || !habit.completedDates || habit.completedDates.length === 0) {
+        return 0;
+      }
+      
+      // If the longest streak is already calculated and no new completions, return it
+      if (habit.longestStreak !== undefined && 
+          habit.lastStreakCalculation && 
+          habit.lastStreakCalculation === habit.completedDates.length) {
+        return habit.longestStreak;
+      }
+      
+      // Sort completed dates
+      const sortedDates = [...habit.completedDates].sort();
+      
+      let longestStreak = 0;
+      let currentStreak = 0;
+      let previousDate = null;
+      
+      for (let i = 0; i < sortedDates.length; i++) {
+        const currentDate = new Date(sortedDates[i]);
+        
+        if (previousDate === null) {
+          // First date in the sequence
+          currentStreak = 1;
+        } else {
+          // Calculate days between previous date and current date
+          const diffTime = currentDate - previousDate;
+          const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+          
+          if (diffDays === 1) {
+            // Consecutive day
+            currentStreak++;
+          } else if (diffDays === 0) {
+            // Same day (shouldn't happen with properly formatted dates)
+            continue;
+          } else {
+            // Not consecutive, reset streak
+            currentStreak = 1;
+          }
+        }
+        
+        // Update longest streak if current streak is longer
+        if (currentStreak > longestStreak) {
+          longestStreak = currentStreak;
+        }
+        
+        previousDate = currentDate;
+      }
+      
+      // Store the calculated longest streak and the completion count
+      habit.longestStreak = longestStreak;
+      habit.lastStreakCalculation = habit.completedDates.length;
+      
+      return longestStreak;
+    },
+    
+    // Check if current streak is the longest streak (for highlighting)
+    isLongestStreak: (state, getters) => (habitId, upToDate) => {
+      const currentStreak = getters.getCurrentStreak(habitId, upToDate);
+      const longestStreak = getters.getLongestStreak(habitId);
+      return currentStreak >= 3 && currentStreak === longestStreak;
+    },
   },
 
   actions: {
@@ -78,6 +192,8 @@ export const useHabitStore = defineStore('habits', {
         active: true, // Default to active
         date: new Date().toISOString().split('T')[0], // Store with current date
         stoppedDate: null, // Default to null
+        longestStreak: 0, // Initialize longest streak
+        lastStreakCalculation: 0 // Track when streak was last calculated
       }
       this.habits.push(newHabit)
       this.saveHabits()
@@ -122,9 +238,13 @@ export const useHabitStore = defineStore('habits', {
         if (isCompleted && dateIndex === -1) {
           // Add date to completedDates if it should be completed and isn't already
           habit.completedDates.push(date);
+          // Reset last streak calculation to force recalculation
+          habit.lastStreakCalculation = null;
         } else if (!isCompleted && dateIndex !== -1) {
           // Remove date from completedDates if it shouldn't be completed but is
           habit.completedDates.splice(dateIndex, 1);
+          // Reset last streak calculation to force recalculation
+          habit.lastStreakCalculation = null;
         }
         
         this.saveHabits();
