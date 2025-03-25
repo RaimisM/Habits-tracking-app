@@ -51,11 +51,6 @@ const stopHabit = () => {
 
 // Edit habit
 const editHabit = () => {
-  // Prevent editing if the habit is stopped
-  if (isStopped.value) {
-    return
-  }
-
   if (isEditing.value) {
     store.updateHabitName(props.habit.id, newName.value)
     isEditing.value = false
@@ -164,8 +159,7 @@ function isSameDay(date1, date2) {
             v-if="isEditing" 
             v-model="newName" 
             :placeholder="habit.name" 
-            class="edit-input" 
-            :disabled="isStopped"
+            class="edit-input"
           />
         </div>
       </div>
@@ -173,7 +167,6 @@ function isSameDay(date1, date2) {
       <button 
         @click="toggleActionVisibility" 
         class="hamburger-button"
-        :disabled="isStopped"
       >
         <img
           src="https://www.svgrepo.com/show/522527/edit-3.svg"
@@ -187,8 +180,7 @@ function isSameDay(date1, date2) {
     <div v-if="isActionVisible" class="action-buttons">
       <button 
         @click="editHabit" 
-        class="edit-button" 
-        :disabled="isStopped"
+        class="edit-button"
       >
         {{ isEditing ? 'Save' : 'Edit' }}
       </button>
