@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useHabitStore } from '../store/habits'
+import { errors } from '../store/errors'
 
 const store = useHabitStore()
 const newHabit = ref('')
@@ -9,7 +10,7 @@ const errorMessage = ref('')
 
 const addHabit = () => {
   if (newHabit.value.trim() === '') {
-    errorMessage.value = 'Habit name cannot be empty!'
+    errorMessage.value = errors.habitNameEmpty
     return
   }
 

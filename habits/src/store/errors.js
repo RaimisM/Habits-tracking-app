@@ -1,9 +1,4 @@
-import { readonly, ref } from 'vue'
+export const errors = {
+  habitNameEmpty: 'Habit name cannot be empty!',
+};
 
-const error = ref(null)
-
-export const errorCurrent = readonly(error)
-
-export function setError(errorObject) {
-  error.value = errorObject
-}
