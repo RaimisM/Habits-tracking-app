@@ -13,7 +13,7 @@ const newName = ref(props.habit.name)
 const isActionVisible = ref(false)
 const isStopped = computed(() => !!props.habit.stoppedDate)
 
-// Compute formatted stop date
+// Compute formatted stop date in YYYY-MM-DD format
 const formattedStopDate = computed(() => {
   if (!props.habit.stoppedDate) return ''
   const date = new Date(props.habit.stoppedDate)
@@ -25,10 +25,17 @@ const isCompletedForSelectedDate = computed(() => {
   return props.habit.completedDates && props.habit.completedDates.includes(store.selectedDate)
 })
 
-// Update habit completion status (now completely disabled)
+// Update habit completion status
 const updateHabitStatus = () => {
-  // No-op when habit is stopped
-  return
+  // Prevent updating status if the habit is stopped and the date is on or before the stop date
+  if (isStopped.value && new Date(store.selectedDate) <= new Date(props.habit.stoppedDate)) {
+    return
+  }
+  store.updateHabitStatusForDate(
+    props.habit.id,
+    store.selectedDate,
+    !isCompletedForSelectedDate.value,
+  )
 }
 
 // Remove habit from the list
@@ -89,6 +96,11 @@ const isHabitVisible = computed(() => {
   return selectedDateObj <= stoppedDateObj
 })
 
+// Computed to check if checkbox should be disabled
+const isCheckboxDisabled = computed(() => {
+  return isStopped.value && new Date(store.selectedDate) <= new Date(props.habit.stoppedDate)
+})
+
 // streak message
 const streakMessage = computed(() => {
   // Check if habit is completed for the selected date
@@ -142,7 +154,7 @@ function isSameDay(date1, date2) {
           :checked="isCompletedForSelectedDate"
           @change="updateHabitStatus"
           class="habit-checkbox"
-          disabled
+          :disabled="isCheckboxDisabled"
         />
         <div>
           <span v-if="!isEditing" :class="{ completed: isCompletedForSelectedDate }">
