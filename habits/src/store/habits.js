@@ -7,7 +7,6 @@ export const useHabitStore = defineStore('habits', {
   }),
 
   getters: {
-    // Get habits for the selected date
     getHabitsForDate: (state) => (date) => {
       const selectedDateObj = new Date(date)
       selectedDateObj.setHours(0, 0, 0, 0)
@@ -39,7 +38,6 @@ export const useHabitStore = defineStore('habits', {
         return 0
       }
 
-      const sortedDates = [...habit.completedDates].sort()
       const targetDate = new Date(upToDate)
       targetDate.setHours(0, 0, 0, 0)
 
@@ -50,18 +48,12 @@ export const useHabitStore = defineStore('habits', {
         return 0
       }
 
-      while (true) {
+      while (currentDate >= new Date(habit.date)) {
         const dateString = currentDate.toISOString().split('T')[0]
 
         if (habit.completedDates.includes(dateString)) {
           streak++
           currentDate.setDate(currentDate.getDate() - 1)
-
-          const habitStartDate = new Date(habit.date)
-          habitStartDate.setHours(0, 0, 0, 0)
-          if (currentDate < habitStartDate) {
-            break
-          }
         } else {
           break
         }
@@ -78,45 +70,37 @@ export const useHabitStore = defineStore('habits', {
 
       if (
         habit.longestStreak !== undefined &&
-        habit.lastStreakCalculation &&
         habit.lastStreakCalculation === habit.completedDates.length
       ) {
         return habit.longestStreak
       }
 
-      const sortedDates = [...habit.completedDates].sort()
-
       let longestStreak = 0
       let currentStreak = 0
       let previousDate = null
 
-      for (let i = 0; i < sortedDates.length; i++) {
-        const currentDate = new Date(sortedDates[i])
+      for (const date of [...habit.completedDates].sort()) {
+        const currentDate = new Date(date)
 
-        if (previousDate === null) {
+        if (!previousDate) {
           currentStreak = 1
         } else {
-          const diffTime = currentDate - previousDate
-          const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+          const diffDays = (currentDate - previousDate) / (1000 * 60 * 60 * 24)
 
           if (diffDays === 1) {
             currentStreak++
-          } else if (diffDays === 0) {
-            continue
-          } else {
+          } else if (diffDays > 1) {
             currentStreak = 1
           }
         }
 
-        if (currentStreak > longestStreak) {
-          longestStreak = currentStreak
-        }
-
+        longestStreak = Math.max(longestStreak, currentStreak)
         previousDate = currentDate
       }
 
-      habit.longestStreak = longestStreak
-      habit.lastStreakCalculation = habit.completedDates.length
+      state.habits = state.habits.map((h) =>
+        h.id === habitId ? { ...h, longestStreak, lastStreakCalculation: h.completedDates.length } : h
+      )
 
       return longestStreak
     },
@@ -134,24 +118,16 @@ export const useHabitStore = defineStore('habits', {
     },
 
     loadHabits() {
-      const storedHabits = JSON.parse(localStorage.getItem('habits')) || []
-
-      storedHabits.forEach((habit) => {
-        if (!habit.completedDates) {
-          habit.completedDates = []
-          if (habit.completed) {
-            habit.completedDates.push(this.selectedDate)
-          }
-          delete habit.completed
-        }
-      })
-
-      this.habits = storedHabits
+      this.habits = JSON.parse(localStorage.getItem('habits')) || []
+      this.habits = this.habits.map((habit) => ({
+        ...habit,
+        completedDates: habit.completedDates || [],
+      }))
       this.saveHabits()
     },
 
     addHabit(habitName) {
-      const newHabit = {
+      this.habits.push({
         id: Date.now(),
         name: habitName,
         completedDates: [],
@@ -160,28 +136,16 @@ export const useHabitStore = defineStore('habits', {
         stoppedDate: null,
         longestStreak: 0,
         lastStreakCalculation: 0,
-      }
-      this.habits.push(newHabit)
+      })
       this.saveHabits()
     },
 
-    updateHabitName(id, newName) {
-      const habit = this.habits.find((h) => h.id === id)
-      if (habit) {
-        habit.name = newName
-        this.saveHabits()
-      }
-    },
-
     stopHabit(habitId, stoppedDate) {
-      const habit = this.habits.find((h) => h.id === habitId)
-      if (habit) {
-        habit.stoppedDate = stoppedDate
-        habit.active = false
-        this.saveHabits()
-        localStorage.setItem(`habit-${habitId}-stopped`, stoppedDate)
-        console.log(`Stopped habit ${habit.name} on date ${stoppedDate}`)
-      }
+      this.habits = this.habits.map((h) =>
+        h.id === habitId ? { ...h, stoppedDate, active: false } : h
+      )
+      this.saveHabits()
+      localStorage.setItem(`habit-${habitId}-stopped`, stoppedDate)
     },
 
     removeHabit(id) {
@@ -190,24 +154,19 @@ export const useHabitStore = defineStore('habits', {
     },
 
     updateHabitStatusForDate(habitId, date, isCompleted) {
-      const habit = this.habits.find((h) => h.id === habitId)
-      if (habit) {
-        if (!habit.completedDates) {
-          habit.completedDates = []
+      this.habits = this.habits.map((h) => {
+        if (h.id === habitId) {
+          const completedDates = new Set(h.completedDates)
+          if (isCompleted) {
+            completedDates.add(date)
+          } else {
+            completedDates.delete(date)
+          }
+          return { ...h, completedDates: Array.from(completedDates), lastStreakCalculation: null }
         }
-
-        const dateIndex = habit.completedDates.indexOf(date)
-
-        if (isCompleted && dateIndex === -1) {
-          habit.completedDates.push(date)
-          habit.lastStreakCalculation = null
-        } else if (!isCompleted && dateIndex !== -1) {
-          habit.completedDates.splice(dateIndex, 1)
-          habit.lastStreakCalculation = null
-        }
-
-        this.saveHabits()
-      }
+        return h
+      })
+      this.saveHabits()
     },
 
     updateHabitStatus(id, completed) {
@@ -219,12 +178,9 @@ export const useHabitStore = defineStore('habits', {
     },
 
     loadStoppedHabitState() {
-      this.habits.forEach((habit) => {
+      this.habits = this.habits.map((habit) => {
         const stoppedDate = localStorage.getItem(`habit-${habit.id}-stopped`)
-        if (stoppedDate) {
-          habit.stoppedDate = stoppedDate
-          habit.active = false
-        }
+        return stoppedDate ? { ...habit, stoppedDate, active: false } : habit
       })
     },
   },
