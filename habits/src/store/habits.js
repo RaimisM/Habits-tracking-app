@@ -115,6 +115,15 @@ export const useHabitStore = defineStore('habits', {
   },
 
   actions: {
+    updateHabitName(habitId, newName) {
+      this.habits = this.habits.map((habit) => 
+        habit.id === habitId 
+          ? { ...habit, name: newName } 
+          : habit
+      )
+      this.saveHabits()
+    },
+
     setSelectedDate(date) {
       this.selectedDate = date
     },
