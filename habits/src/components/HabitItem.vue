@@ -82,15 +82,29 @@ const isHabitVisible = computed(() => {
 
 // streak message
 const streakMessage = computed(() => {
-  if (!isCompletedForSelectedDate.value) {
+  // Check if habit is completed for the selected date
+  if (!props.habit.completedDates || 
+      !props.habit.completedDates.includes(store.selectedDate)) {
     return ''
   }
 
+  // Sort completed dates in descending order (most recent first)
   const completedDates = props.habit.completedDates.sort((a, b) => new Date(b) - new Date(a))
+  
+  // Find the index of the selected date in the completed dates
+  const selectedDateIndex = completedDates.findIndex(date => 
+    isSameDay(new Date(date), new Date(store.selectedDate))
+  )
+
+  // If the selected date is not in completed dates, return empty string
+  if (selectedDateIndex === -1) {
+    return ''
+  }
+
+  // Calculate streak up to the selected date
   let streak = 1
-  for (let i = 1; i < completedDates.length; i++) {
-    const diff =
-      (new Date(completedDates[i - 1]) - new Date(completedDates[i])) / (1000 * 3600 * 24)
+  for (let i = selectedDateIndex + 1; i < completedDates.length; i++) {
+    const diff = (new Date(completedDates[i - 1]) - new Date(completedDates[i])) / (1000 * 3600 * 24)
     if (diff === 1) {
       streak++
     } else {
@@ -98,8 +112,16 @@ const streakMessage = computed(() => {
     }
   }
 
+  // Return streak message only if streak is 3 or more
   return streak >= 3 ? `You've completed your habit for ${streak} consecutive days!` : ''
 })
+
+// Helper function to check if two dates are the same day
+function isSameDay(date1, date2) {
+  return date1.getFullYear() === date2.getFullYear() &&
+         date1.getMonth() === date2.getMonth() &&
+         date1.getDate() === date2.getDate()
+}
 </script>
 
 <template>
