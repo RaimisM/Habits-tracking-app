@@ -13,18 +13,22 @@ const newName = ref(props.habit.name)
 const isActionVisible = ref(false)
 const isStopped = computed(() => !!props.habit.stoppedDate)
 
+// Compute formatted stop date
+const formattedStopDate = computed(() => {
+  if (!props.habit.stoppedDate) return ''
+  const date = new Date(props.habit.stoppedDate)
+  return date.toISOString().split('T')[0]
+})
+
 // is habit completed for the selected date
 const isCompletedForSelectedDate = computed(() => {
   return props.habit.completedDates && props.habit.completedDates.includes(store.selectedDate)
 })
 
-// Update habit completion status
+// Update habit completion status (now completely disabled)
 const updateHabitStatus = () => {
-  store.updateHabitStatusForDate(
-    props.habit.id,
-    store.selectedDate,
-    !isCompletedForSelectedDate.value,
-  )
+  // No-op when habit is stopped
+  return
 }
 
 // Remove habit from the list
@@ -40,6 +44,11 @@ const stopHabit = () => {
 
 // Edit habit
 const editHabit = () => {
+  // Prevent editing if the habit is stopped
+  if (isStopped.value) {
+    return
+  }
+
   if (isEditing.value) {
     store.updateHabitName(props.habit.id, newName.value)
     isEditing.value = false
@@ -133,16 +142,27 @@ function isSameDay(date1, date2) {
           :checked="isCompletedForSelectedDate"
           @change="updateHabitStatus"
           class="habit-checkbox"
+          disabled
         />
         <div>
           <span v-if="!isEditing" :class="{ completed: isCompletedForSelectedDate }">
             {{ habit.name }}
           </span>
-          <input v-if="isEditing" v-model="newName" :placeholder="habit.name" class="edit-input" />
+          <input 
+            v-if="isEditing" 
+            v-model="newName" 
+            :placeholder="habit.name" 
+            class="edit-input" 
+            :disabled="isStopped"
+          />
         </div>
       </div>
 
-      <button @click="toggleActionVisibility" class="hamburger-button">
+      <button 
+        @click="toggleActionVisibility" 
+        class="hamburger-button"
+        :disabled="isStopped"
+      >
         <img
           src="https://www.svgrepo.com/show/522527/edit-3.svg"
           alt="Edit Icon"
@@ -153,7 +173,11 @@ function isSameDay(date1, date2) {
     </div>
 
     <div v-if="isActionVisible" class="action-buttons">
-      <button @click="editHabit" class="edit-button">
+      <button 
+        @click="editHabit" 
+        class="edit-button" 
+        :disabled="isStopped"
+      >
         {{ isEditing ? 'Save' : 'Edit' }}
       </button>
       <button @click="stopHabit" class="stop-button">Stop</button>
@@ -162,6 +186,10 @@ function isSameDay(date1, date2) {
 
     <div v-if="streakMessage" class="streak-message">
       <span>{{ streakMessage }}</span>
+    </div>
+
+    <div v-if="isStopped" class="stopped-message">
+      This habit was stopped on {{ formattedStopDate }}
     </div>
   </div>
 </template>
@@ -172,7 +200,10 @@ function isSameDay(date1, date2) {
   font-weight: bold;
   margin-top: 10px;
 }
-
+.stopped-message {
+  color: rgb(174, 2, 2);
+  font-size: 10px;
+}
 .habit-item.stopped {
   background-color: rgb(198, 199, 199);
 }
