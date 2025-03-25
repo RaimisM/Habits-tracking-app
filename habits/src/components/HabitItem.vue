@@ -13,14 +13,13 @@ const newName = ref(props.habit.name)
 const isActionVisible = ref(false)
 const isStopped = computed(() => !!props.habit.stoppedDate)
 
-// Compute formatted stop date in YYYY-MM-DD format
+// stop date
 const formattedStopDate = computed(() => {
   if (!props.habit.stoppedDate) return ''
   const date = new Date(props.habit.stoppedDate)
   return date.toISOString().split('T')[0]
 })
 
-// is habit completed for the selected date
 const isCompletedForSelectedDate = computed(() => {
   return props.habit.completedDates && props.habit.completedDates.includes(store.selectedDate)
 })
