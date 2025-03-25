@@ -4,12 +4,12 @@ import { useHabitStore } from '../store/habits'
 import HabitItem from './HabitItem.vue'
 
 defineProps({
-  selectedDate: String, // Keeping this since it's used in HabitItem
+  selectedDate: String,
 })
 
 const store = useHabitStore()
 
-// Load all habits
+
 const habits = computed(() => store.habits)
 </script>
 
