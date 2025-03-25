@@ -23,47 +23,26 @@ const addHabit = () => {
 
 <template>
   <div class="add-habit-container">
-    <button 
-      @click="isOpen = true" 
-      class="add-habit-button"
-    >
-      + Add Habit
-    </button>
+    <button @click="isOpen = true" class="add-habit-button">+ Add Habit</button>
 
-    <div 
-      v-if="isOpen" 
-      class="habit-modal-overlay"
-    >
+    <div v-if="isOpen" class="habit-modal-overlay">
       <div class="habit-modal">
         <h2 class="modal-title">Create New Habit</h2>
-        
-        <input 
-          v-model="newHabit" 
-          placeholder="Enter habit name" 
-          class="habit-input" 
+
+        <input
+          v-model="newHabit"
+          placeholder="Enter habit name"
+          class="habit-input"
           @keyup.enter="addHabit"
         />
-        
-        <p 
-          v-if="errorMessage" 
-          class="error-message"
-        >
+
+        <p v-if="errorMessage" class="error-message">
           {{ errorMessage }}
         </p>
-        
+
         <div class="modal-actions">
-          <button 
-            @click="isOpen = false" 
-            class="btn btn-cancel"
-          >
-            Cancel
-          </button>
-          <button 
-            @click="addHabit" 
-            class="btn btn-add"
-          >
-            Add Habit
-          </button>
+          <button @click="isOpen = false" class="btn btn-cancel">Cancel</button>
+          <button @click="addHabit" class="btn btn-add">Add Habit</button>
         </div>
       </div>
     </div>
@@ -77,7 +56,7 @@ const addHabit = () => {
 }
 
 .add-habit-button {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   padding: 10px 15px;
@@ -160,7 +139,7 @@ const addHabit = () => {
 }
 
 .btn-add {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
 }
 

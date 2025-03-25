@@ -9,7 +9,6 @@ defineProps({
 
 const store = useHabitStore()
 
-
 const habits = computed(() => store.habits)
 </script>
 

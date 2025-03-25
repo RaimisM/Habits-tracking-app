@@ -99,17 +99,16 @@ const isCheckboxDisabled = computed(() => {
 // streak message
 const streakMessage = computed(() => {
   // Check if habit is completed for the selected date
-  if (!props.habit.completedDates || 
-      !props.habit.completedDates.includes(store.selectedDate)) {
+  if (!props.habit.completedDates || !props.habit.completedDates.includes(store.selectedDate)) {
     return ''
   }
 
   // Sort completed dates in descending order (most recent first)
   const completedDates = props.habit.completedDates.sort((a, b) => new Date(b) - new Date(a))
-  
+
   // Find the index of the selected date in the completed dates
-  const selectedDateIndex = completedDates.findIndex(date => 
-    isSameDay(new Date(date), new Date(store.selectedDate))
+  const selectedDateIndex = completedDates.findIndex((date) =>
+    isSameDay(new Date(date), new Date(store.selectedDate)),
   )
 
   // If the selected date is not in completed dates, return empty string
@@ -120,7 +119,8 @@ const streakMessage = computed(() => {
   // Calculate streak up to the selected date
   let streak = 1
   for (let i = selectedDateIndex + 1; i < completedDates.length; i++) {
-    const diff = (new Date(completedDates[i - 1]) - new Date(completedDates[i])) / (1000 * 3600 * 24)
+    const diff =
+      (new Date(completedDates[i - 1]) - new Date(completedDates[i])) / (1000 * 3600 * 24)
     if (diff === 1) {
       streak++
     } else {
@@ -134,9 +134,11 @@ const streakMessage = computed(() => {
 
 // Helper function to check if two dates are the same day
 function isSameDay(date1, date2) {
-  return date1.getFullYear() === date2.getFullYear() &&
-         date1.getMonth() === date2.getMonth() &&
-         date1.getDate() === date2.getDate()
+  return (
+    date1.getFullYear() === date2.getFullYear() &&
+    date1.getMonth() === date2.getMonth() &&
+    date1.getDate() === date2.getDate()
+  )
 }
 </script>
 
@@ -155,19 +157,11 @@ function isSameDay(date1, date2) {
           <span v-if="!isEditing" :class="{ completed: isCompletedForSelectedDate }">
             {{ habit.name }}
           </span>
-          <input 
-            v-if="isEditing" 
-            v-model="newName" 
-            :placeholder="habit.name" 
-            class="edit-input"
-          />
+          <input v-if="isEditing" v-model="newName" :placeholder="habit.name" class="edit-input" />
         </div>
       </div>
 
-      <button 
-        @click="toggleActionVisibility" 
-        class="hamburger-button"
-      >
+      <button @click="toggleActionVisibility" class="hamburger-button">
         <img
           src="https://www.svgrepo.com/show/522527/edit-3.svg"
           alt="Edit Icon"
@@ -178,10 +172,7 @@ function isSameDay(date1, date2) {
     </div>
 
     <div v-if="isActionVisible" class="action-buttons">
-      <button 
-        @click="editHabit" 
-        class="edit-button"
-      >
+      <button @click="editHabit" class="edit-button">
         {{ isEditing ? 'Save' : 'Edit' }}
       </button>
       <button @click="stopHabit" class="stop-button">Stop</button>
