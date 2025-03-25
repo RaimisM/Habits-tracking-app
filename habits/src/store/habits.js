@@ -99,7 +99,9 @@ export const useHabitStore = defineStore('habits', {
       }
 
       state.habits = state.habits.map((h) =>
-        h.id === habitId ? { ...h, longestStreak, lastStreakCalculation: h.completedDates.length } : h
+        h.id === habitId
+          ? { ...h, longestStreak, lastStreakCalculation: h.completedDates.length }
+          : h,
       )
 
       return longestStreak
@@ -142,7 +144,7 @@ export const useHabitStore = defineStore('habits', {
 
     stopHabit(habitId, stoppedDate) {
       this.habits = this.habits.map((h) =>
-        h.id === habitId ? { ...h, stoppedDate, active: false } : h
+        h.id === habitId ? { ...h, stoppedDate, active: false } : h,
       )
       this.saveHabits()
       localStorage.setItem(`habit-${habitId}-stopped`, stoppedDate)
