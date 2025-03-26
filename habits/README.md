@@ -1,41 +1,65 @@
-# habits
+# Habits Tracking App
 
-This template should help get you started developing with Vue 3 in Vite.
+A Vue 3 application for tracking and managing personal habits, built with Vite.
 
-## Recommended IDE Setup
+## 🌟 Project Overview
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+Habits is a modern, responsive web application designed to help users track, monitor, and improve their daily habits. Built with Vue 3 and cutting-edge web technologies, this app provides an intuitive interface for personal habit management.
 
-## Customize configuration
+## 🛠 Tech Stack
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+- **Frontend**: Vue 3
+- **State Management**: Pinia
+- **Routing**: Vue Router
+- **Build Tool**: Vite
+- **Code Quality**: ESLint, Prettier, Stylelint
 
-## Project Setup
+## 📋 Prerequisites
 
-```sh
+- Node.js (v18.x or later)
+- npm (v9.x or later)
+
+## 🚀 Getting Started
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/RaimisM/Habits-tracking-app.git
+cd habits
+```
+
+### 2. Install Dependencies
+
+```bash
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+### 3. Development Server
 
-```sh
+Start the development server with hot-reload:
+
+```bash
 npm run dev
 ```
 
-### Compile and Minify for Production
+Open `http://localhost:5173` in your browser to view the app.
 
-```sh
-npm run build
-```
+## 🔧 Available Scripts
 
-### Lint with [ESLint](https://eslint.org/)
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npm run lint` | Run ESLint for code quality checks |
+| `npm run format` | Format code using Prettier |
+| `npm run stylelint` | Lint CSS/styling |
 
-```sh
-npm run lint
-```
+## 🖥️ Recommended IDE Setup
 
+- [VSCode](https://code.visualstudio.com/)
+- Extensions:
+  - ESLint
+  - Prettier
+  - Stylelint
 
-
-npm install pinia
-npm install tailwindcss postcss autoprefixer
-npx tailwindcss init -p
+Disable Vetur if installed.
