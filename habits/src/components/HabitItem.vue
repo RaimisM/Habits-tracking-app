@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useHabitStore } from '../store/habits'
+import HabitTracker from './HabitTracker.vue'
 
 const store = useHabitStore()
 const props = defineProps({
@@ -92,44 +93,6 @@ const isHabitVisible = computed(() => {
 const isCheckboxDisabled = computed(() => {
   return isStopped.value && new Date(store.selectedDate) <= new Date(props.habit.stoppedDate)
 })
-
-// streak message
-const streakMessage = computed(() => {
-  if (!props.habit.completedDates || !props.habit.completedDates.includes(store.selectedDate)) {
-    return ''
-  }
-
-  const completedDates = props.habit.completedDates.sort((a, b) => new Date(b) - new Date(a))
-  const selectedDateIndex = completedDates.findIndex((date) =>
-    isSameDay(new Date(date), new Date(store.selectedDate)),
-  )
-
-  if (selectedDateIndex === -1) {
-    return ''
-  }
-
-  let streak = 1
-  for (let i = selectedDateIndex + 1; i < completedDates.length; i++) {
-    const diff =
-      (new Date(completedDates[i - 1]) - new Date(completedDates[i])) / (1000 * 3600 * 24)
-    if (diff === 1) {
-      streak++
-    } else {
-      break
-    }
-  }
-
-  return streak >= 3 ? `You've completed your habit for ${streak} consecutive days!` : ''
-})
-
-// function to check if two dates are the same day
-function isSameDay(date1, date2) {
-  return (
-    date1.getFullYear() === date2.getFullYear() &&
-    date1.getMonth() === date2.getMonth() &&
-    date1.getDate() === date2.getDate()
-  )
-}
 </script>
 
 <template>
@@ -169,9 +132,7 @@ function isSameDay(date1, date2) {
       <button @click="removeHabit" class="delete-button">Delete</button>
     </div>
 
-    <div v-if="streakMessage" class="streak-message">
-      <span>{{ streakMessage }}</span>
-    </div>
+    <HabitTracker :habit="habit" />
 
     <div v-if="isStopped" class="stopped-message">
       This habit was stopped on {{ formattedStopDate }}
@@ -180,15 +141,11 @@ function isSameDay(date1, date2) {
 </template>
 
 <style scoped>
-.streak-message {
-  color: green;
-  font-weight: bold;
-  margin-top: 10px;
-}
 .stopped-message {
   color: rgb(174, 2, 2);
   font-size: 10px;
 }
+
 .habit-item.stopped {
   background-color: rgb(198, 199, 199);
 }
