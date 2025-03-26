@@ -24,9 +24,8 @@ const isCompletedForSelectedDate = computed(() => {
   return props.habit.completedDates && props.habit.completedDates.includes(store.selectedDate)
 })
 
-// Update habit completion status
 const updateHabitStatus = () => {
-  // Prevent updating status if the habit is stopped and the date is on or before the stop date
+  // Prevent updating status if stopped
   if (isStopped.value && new Date(store.selectedDate) <= new Date(props.habit.stoppedDate)) {
     return
   }
@@ -58,7 +57,6 @@ const editHabit = () => {
   }
 }
 
-// Toggle visibility of action buttons
 const toggleActionVisibility = () => {
   isActionVisible.value = !isActionVisible.value
 }
@@ -97,25 +95,19 @@ const isCheckboxDisabled = computed(() => {
 
 // streak message
 const streakMessage = computed(() => {
-  // Check if habit is completed for the selected date
   if (!props.habit.completedDates || !props.habit.completedDates.includes(store.selectedDate)) {
     return ''
   }
 
-  // Sort completed dates in descending order (most recent first)
   const completedDates = props.habit.completedDates.sort((a, b) => new Date(b) - new Date(a))
-
-  // Find the index of the selected date in the completed dates
   const selectedDateIndex = completedDates.findIndex((date) =>
     isSameDay(new Date(date), new Date(store.selectedDate)),
   )
 
-  // If the selected date is not in completed dates, return empty string
   if (selectedDateIndex === -1) {
     return ''
   }
 
-  // Calculate streak up to the selected date
   let streak = 1
   for (let i = selectedDateIndex + 1; i < completedDates.length; i++) {
     const diff =
@@ -127,7 +119,6 @@ const streakMessage = computed(() => {
     }
   }
 
-  // Return streak message only if streak is 3 or more
   return streak >= 3 ? `You've completed your habit for ${streak} consecutive days!` : ''
 })
 
@@ -202,7 +193,6 @@ function isSameDay(date1, date2) {
   background-color: rgb(198, 199, 199);
 }
 
-/* Habit item styling */
 .habit-item {
   display: flex;
   flex-direction: column;

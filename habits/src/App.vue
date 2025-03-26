@@ -1,19 +1,3 @@
-<template>
-  <div id="app">
-    <header>
-      <h1>Habit Tracker</h1>
-    </header>
-
-    <main>
-      <DayNavigator :selectedDate="selectedDate" @dateChanged="updateSelectedDate" />
-
-      <AddHabit />
-
-      <HabitList :selectedDate="selectedDate" />
-    </main>
-  </div>
-</template>
-
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useHabitStore } from './store/habits'
@@ -35,6 +19,22 @@ const updateSelectedDate = (newDate) => {
   selectedDate.value = newDate
 }
 </script>
+
+<template>
+  <div id="app">
+    <header>
+      <h1>Habit Tracker</h1>
+    </header>
+
+    <main>
+      <DayNavigator :selectedDate="selectedDate" @dateChanged="updateSelectedDate" />
+
+      <AddHabit />
+
+      <HabitList :selectedDate="selectedDate" />
+    </main>
+  </div>
+</template>
 
 <style scoped>
 #app {
