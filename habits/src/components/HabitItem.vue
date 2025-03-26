@@ -122,7 +122,7 @@ const streakMessage = computed(() => {
   return streak >= 3 ? `You've completed your habit for ${streak} consecutive days!` : ''
 })
 
-// Helper function to check if two dates are the same day
+// function to check if two dates are the same day
 function isSameDay(date1, date2) {
   return (
     date1.getFullYear() === date2.getFullYear() &&

@@ -9,7 +9,6 @@ const store = useHabitStore()
 
 const today = dayjs().format('YYYY-MM-DD')
 
-// Get selected date
 const selectedDate = computed({
   get: () => store.selectedDate,
   set: (newDate) => {
@@ -67,7 +66,6 @@ const changeDay = (days) => {
   font-size: 16px;
 }
 
-/* Mobile adjustments */
 @media (max-width: 640px) {
   .nav-btn {
     padding: 6px 10px;

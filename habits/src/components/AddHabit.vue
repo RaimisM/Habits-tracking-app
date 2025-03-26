@@ -1,7 +1,6 @@
 <script setup>
 import { ref } from 'vue'
 import { useHabitStore } from '../store/habits'
-import { errors } from '../store/errors'
 
 const store = useHabitStore()
 const newHabit = ref('')
@@ -10,7 +9,7 @@ const errorMessage = ref('')
 
 const addHabit = () => {
   if (newHabit.value.trim() === '') {
-    errorMessage.value = errors.habitNameEmpty
+    errorMessage.value = 'Habit name cannot be empty!'
     return
   }
 
@@ -111,6 +110,7 @@ const addHabit = () => {
   color: #d9534f;
   margin-bottom: 1rem;
   font-size: 0.9rem;
+  font-weight: bold;
 }
 
 .modal-actions {
