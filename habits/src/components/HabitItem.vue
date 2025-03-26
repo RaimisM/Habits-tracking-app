@@ -295,13 +295,6 @@ function isSameDay(date1, date2) {
   cursor: pointer;
 }
 
-.line {
-  width: 100%;
-  height: 3px;
-  background-color: #333;
-  border-radius: 2px;
-}
-
 .action-buttons {
   display: flex;
   flex-direction: row;
