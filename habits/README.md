@@ -56,10 +56,8 @@ Open `http://localhost:5173` in your browser to view the app.
 
 ## 🖥️ Recommended IDE Setup
 
-- [VSCode](https://code.visualstudio.com/)
+- VSCode
 - Extensions:
   - ESLint
   - Prettier
   - Stylelint
-
-Disable Vetur if installed.
