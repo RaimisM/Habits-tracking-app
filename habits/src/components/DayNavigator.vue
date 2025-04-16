@@ -1,10 +1,11 @@
 <script setup>
-import { computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, onMounted, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import dayjs from 'dayjs'
 import { useHabitStore } from '../store/habits'
 
 const router = useRouter()
+const route = useRoute()
 const store = useHabitStore()
 
 const today = dayjs().format('YYYY-MM-DD')
@@ -13,17 +14,30 @@ const selectedDate = computed({
   get: () => store.selectedDate,
   set: (newDate) => {
     store.selectedDate = newDate
-  },
+    router.push(`/day/${newDate}`)
+  }
 })
 
-// Function to navigate days
 const changeDay = (days) => {
   const newDate = dayjs(selectedDate.value).add(days, 'day').format('YYYY-MM-DD')
-  if (dayjs(newDate).isAfter(today)) return // Prevent future dates
-
+  if (dayjs(newDate).isAfter(today)) return
   selectedDate.value = newDate
-  router.push(`/day/${newDate}`)
 }
+
+onMounted(() => {
+  if (route.params.date && route.params.date !== selectedDate.value) {
+    store.selectedDate = route.params.date
+  }
+})
+
+watch(
+  () => route.params.date,
+  (newDate) => {
+    if (newDate && newDate !== store.selectedDate) {
+      store.selectedDate = newDate
+    }
+  }
+)
 </script>
 
 <template>
