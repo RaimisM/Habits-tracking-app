@@ -7,14 +7,27 @@ import { useHabitStore } from '../store/habits'
 const router = useRouter()
 const route = useRoute()
 const store = useHabitStore()
-
 const today = dayjs().format('YYYY-MM-DD')
+
+const isValidDate = (dateString) => {
+  const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+  if (!datePattern.test(dateString)) return false;
+  
+  const date = dayjs(dateString);
+  return date.isValid() && date.format('YYYY-MM-DD') === dateString;
+}
 
 const selectedDate = computed({
   get: () => store.selectedDate,
   set: (newDate) => {
-    store.selectedDate = newDate
-    router.push(`/day/${newDate}`)
+    if (isValidDate(newDate)) {
+      store.selectedDate = newDate;
+      router.push(`/day/${newDate}`);
+    } else {
+      alert('Invalid date format. Please use YYYY-MM-DD format with valid date values.');
+      store.selectedDate = today;
+      router.push(`/day/${today}`);
+    }
   }
 })
 
@@ -25,16 +38,28 @@ const changeDay = (days) => {
 }
 
 onMounted(() => {
-  if (route.params.date && route.params.date !== selectedDate.value) {
-    store.selectedDate = route.params.date
+  if (route.params.date) {
+    if (isValidDate(route.params.date)) {
+      store.selectedDate = route.params.date;
+    } else {
+      alert('Invalid date detected in URL. Redirecting to today\'s date.');
+      store.selectedDate = today;
+      router.push(`/day/${today}`);
+    }
   }
 })
 
 watch(
   () => route.params.date,
   (newDate) => {
-    if (newDate && newDate !== store.selectedDate) {
-      store.selectedDate = newDate
+    if (newDate) {
+      if (isValidDate(newDate)) {
+        store.selectedDate = newDate;
+      } else {
+        alert('Invalid date detected. Redirecting to today\'s date.');
+        store.selectedDate = today;
+        router.push(`/day/${today}`);
+      }
     }
   }
 )
