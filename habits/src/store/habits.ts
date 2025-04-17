@@ -1,13 +1,53 @@
 import { defineStore } from 'pinia'
 
-export const useHabitStore = defineStore('habits', {
-  state: () => ({
+interface Habit {
+  id: number;
+  name: string;
+  completedDates: string[];
+  active: boolean;
+  date: string;
+  stoppedDate: string | null;
+  longestStreak?: number;
+  lastStreakCalculation?: number | null;
+}
+
+interface HabitState {
+  habits: Habit[];
+  selectedDate: string;
+}
+
+// Define types for the getters using proper Pinia constraints
+type HabitGetters = {
+  getHabitsForDate: (state: HabitState) => (date: string) => Habit[];
+  isHabitCompletedForDate: (state: HabitState) => (habitId: number, date: string) => boolean;
+  getCurrentStreak: (state: HabitState) => (habitId: number, upToDate: string) => number;
+  getLongestStreak: (state: HabitState) => (habitId: number) => number;
+  isLongestStreak: (state: HabitState) => (habitId: number, upToDate: string) => boolean;
+  [key: string]: (state: HabitState) => any; // Index signature to satisfy _GettersTree constraint
+}
+
+// Define a type for the actions
+interface HabitActions {
+  updateHabitName(habitId: number, newName: string): void;
+  setSelectedDate(date: string): void;
+  loadHabits(): void;
+  addHabit(habitName: string): void;
+  stopHabit(habitId: number, stoppedDate: string): void;
+  removeHabit(id: number): void;
+  updateHabitStatusForDate(habitId: number, date: string, isCompleted: boolean): void;
+  updateHabitStatus(id: number, completed: boolean): void;
+  saveHabits(): void;
+  loadStoppedHabitState(): void;
+}
+
+export const useHabitStore = defineStore<'habits', HabitState, HabitGetters, HabitActions>('habits', {
+  state: (): HabitState => ({
     habits: [],
     selectedDate: new Date().toISOString().split('T')[0],
   }),
 
   getters: {
-    getHabitsForDate: (state) => (date) => {
+    getHabitsForDate: (state) => (date: string): Habit[] => {
       const selectedDateObj = new Date(date)
       selectedDateObj.setHours(0, 0, 0, 0)
 
@@ -15,7 +55,7 @@ export const useHabitStore = defineStore('habits', {
         const habitStartDateObj = new Date(habit.date)
         habitStartDateObj.setHours(0, 0, 0, 0)
 
-        let stopDateObj = null
+        let stopDateObj: Date | null = null
         if (habit.stoppedDate) {
           stopDateObj = new Date(habit.stoppedDate)
           stopDateObj.setHours(0, 0, 0, 0)
@@ -27,12 +67,12 @@ export const useHabitStore = defineStore('habits', {
       })
     },
 
-    isHabitCompletedForDate: (state) => (habitId, date) => {
+    isHabitCompletedForDate: (state) => (habitId: number, date: string): boolean => {
       const habit = state.habits.find((h) => h.id === habitId)
-      return habit && habit.completedDates && habit.completedDates.includes(date)
+      return habit !== undefined && habit.completedDates && habit.completedDates.includes(date)
     },
 
-    getCurrentStreak: (state) => (habitId, upToDate) => {
+    getCurrentStreak: (state) => (habitId: number, upToDate: string): number => {
       const habit = state.habits.find((h) => h.id === habitId)
       if (!habit || !habit.completedDates || habit.completedDates.length === 0) {
         return 0
@@ -62,7 +102,7 @@ export const useHabitStore = defineStore('habits', {
       return streak
     },
 
-    getLongestStreak: (state) => (habitId) => {
+    getLongestStreak: (state) => (habitId: number): number => {
       const habit = state.habits.find((h) => h.id === habitId)
       if (!habit || !habit.completedDates || habit.completedDates.length === 0) {
         return 0
@@ -77,7 +117,7 @@ export const useHabitStore = defineStore('habits', {
 
       let longestStreak = 0
       let currentStreak = 0
-      let previousDate = null
+      let previousDate: Date | null = null
 
       for (const date of [...habit.completedDates].sort()) {
         const currentDate = new Date(date)
@@ -85,7 +125,7 @@ export const useHabitStore = defineStore('habits', {
         if (!previousDate) {
           currentStreak = 1
         } else {
-          const diffDays = (currentDate - previousDate) / (1000 * 60 * 60 * 24)
+          const diffDays = (currentDate.getTime() - previousDate.getTime()) / (1000 * 60 * 60 * 24)
 
           if (diffDays === 1) {
             currentStreak++
@@ -107,27 +147,30 @@ export const useHabitStore = defineStore('habits', {
       return longestStreak
     },
 
-    isLongestStreak: (state, getters) => (habitId, upToDate) => {
-      const currentStreak = getters.getCurrentStreak(habitId, upToDate)
-      const longestStreak = getters.getLongestStreak(habitId)
-      return currentStreak >= 3 && currentStreak === longestStreak
+    isLongestStreak: (state) => (habitId: number, upToDate: string): boolean => {
+      // Fixed version - we need to use store access pattern instead
+      const store = useHabitStore();
+      const currentStreak = store.getCurrentStreak(habitId, upToDate);
+      const longestStreak = store.getLongestStreak(habitId);
+      return currentStreak >= 3 && currentStreak === longestStreak;
     },
   },
 
   actions: {
-    updateHabitName(habitId, newName) {
+    updateHabitName(habitId: number, newName: string): void {
       this.habits = this.habits.map((habit) =>
         habit.id === habitId ? { ...habit, name: newName } : habit,
       )
       this.saveHabits()
     },
 
-    setSelectedDate(date) {
+    setSelectedDate(date: string): void {
       this.selectedDate = date
     },
 
-    loadHabits() {
-      this.habits = JSON.parse(localStorage.getItem('habits')) || []
+    loadHabits(): void {
+      const savedHabits = localStorage.getItem('habits')
+      this.habits = savedHabits ? JSON.parse(savedHabits) : []
       this.habits = this.habits.map((habit) => ({
         ...habit,
         completedDates: habit.completedDates || [],
@@ -135,7 +178,7 @@ export const useHabitStore = defineStore('habits', {
       this.saveHabits()
     },
 
-    addHabit(habitName) {
+    addHabit(habitName: string): void {
       this.habits.push({
         id: Date.now(),
         name: habitName,
@@ -149,7 +192,7 @@ export const useHabitStore = defineStore('habits', {
       this.saveHabits()
     },
 
-    stopHabit(habitId, stoppedDate) {
+    stopHabit(habitId: number, stoppedDate: string): void {
       this.habits = this.habits.map((h) =>
         h.id === habitId ? { ...h, stoppedDate, active: false } : h,
       )
@@ -157,12 +200,12 @@ export const useHabitStore = defineStore('habits', {
       localStorage.setItem(`habit-${habitId}-stopped`, stoppedDate)
     },
 
-    removeHabit(id) {
+    removeHabit(id: number): void {
       this.habits = this.habits.filter((habit) => habit.id !== id)
       this.saveHabits()
     },
 
-    updateHabitStatusForDate(habitId, date, isCompleted) {
+    updateHabitStatusForDate(habitId: number, date: string, isCompleted: boolean): void {
       this.habits = this.habits.map((h) => {
         if (h.id === habitId) {
           const completedDates = new Set(h.completedDates)
@@ -178,21 +221,19 @@ export const useHabitStore = defineStore('habits', {
       this.saveHabits()
     },
 
-    updateHabitStatus(id, completed) {
+    updateHabitStatus(id: number, completed: boolean): void {
       this.updateHabitStatusForDate(id, this.selectedDate, completed)
     },
 
-    saveHabits() {
+    saveHabits(): void {
       localStorage.setItem('habits', JSON.stringify(this.habits))
     },
 
-    loadStoppedHabitState() {
+    loadStoppedHabitState(): void {
       this.habits = this.habits.map((habit) => {
         const stoppedDate = localStorage.getItem(`habit-${habit.id}-stopped`)
         return stoppedDate ? { ...habit, stoppedDate, active: false } : habit
       })
     },
   },
-
-  persist: true,
 })

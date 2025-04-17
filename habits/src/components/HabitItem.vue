@@ -1,14 +1,20 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useHabitStore } from '../store/habits'
 import HabitTracker from './HabitTracker.vue'
 
-const store = useHabitStore()
-const props = defineProps({
-  habit: Object,
-  selectedDate: String,
-})
+// Define props using TypeScript's type annotations for defineProps
+const props = defineProps<{
+  habit: {
+    id: number;
+    name: string;
+    stoppedDate?: string;
+    completedDates?: string[];
+  };
+  selectedDate: string;
+}>()
 
+const store = useHabitStore()
 const isEditing = ref(false)
 const newName = ref(props.habit.name)
 const isActionVisible = ref(false)
@@ -27,7 +33,7 @@ const isCompletedForSelectedDate = computed(() => {
 
 const updateHabitStatus = () => {
   // Prevent updating status if stopped
-  if (isStopped.value && new Date(store.selectedDate) <= new Date(props.habit.stoppedDate)) {
+  if (isStopped.value && new Date(store.selectedDate) <= new Date(props.habit.stoppedDate as string)) {
     return
   }
   store.updateHabitStatusForDate(
@@ -63,8 +69,9 @@ const toggleActionVisibility = () => {
 }
 
 // Close menu when clicking outside
-const handleClickOutside = (event) => {
-  if (!event.target.closest('.habit-item')) {
+const handleClickOutside = (event: MouseEvent) => {
+  const target = event.target as HTMLElement
+  if (!target.closest('.habit-item')) {
     isActionVisible.value = false
   }
 }
@@ -91,7 +98,7 @@ const isHabitVisible = computed(() => {
 
 // Computed to check if checkbox should be disabled
 const isCheckboxDisabled = computed(() => {
-  return isStopped.value && new Date(store.selectedDate) <= new Date(props.habit.stoppedDate)
+  return isStopped.value && new Date(store.selectedDate) <= new Date(props.habit.stoppedDate as string)
 })
 </script>
 

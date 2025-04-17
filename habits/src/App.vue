@@ -1,12 +1,12 @@
-<script setup>
+<script lang="ts" setup>
 import { ref, onMounted } from 'vue'
-import { useHabitStore } from './store/habits'
+import { useHabitStore } from '../src/store/habits'
 import HabitList from './components/HabitList.vue'
-import DayNavigator from './components/DayNavigator.vue'
+import DayNavigator from '../src/components/DayNavigator.vue'
 import AddHabit from './components/AddHabit.vue'
 
 const store = useHabitStore()
-const selectedDate = ref(new Date().toISOString().split('T')[0])
+const selectedDate = ref<string>(new Date().toISOString().split('T')[0])
 
 onMounted(() => {
   console.log('App mounted - Loading habits')
@@ -14,7 +14,7 @@ onMounted(() => {
   store.loadStoppedHabitState()
 })
 
-const updateSelectedDate = (newDate) => {
+const updateSelectedDate = (newDate: string) => {
   console.log(`Selected date changed: ${newDate}`)
   selectedDate.value = newDate
 }

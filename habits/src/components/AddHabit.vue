@@ -1,13 +1,13 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import { useHabitStore } from '../store/habits'
 
 const store = useHabitStore()
-const newHabit = ref('')
-const isOpen = ref(false)
-const errorMessage = ref('')
+const newHabit = ref<string>('')
+const isOpen = ref<boolean>(false)
+const errorMessage = ref<string>('')
 
-const addHabit = () => {
+const addHabit = (): void => {
   if (newHabit.value.trim() === '') {
     errorMessage.value = 'Habit name cannot be empty!'
     return
