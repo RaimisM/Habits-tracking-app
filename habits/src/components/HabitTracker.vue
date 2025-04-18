@@ -1,18 +1,21 @@
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
-import { defineProps } from 'vue'
 import { useHabitStore } from '../store/habits'
 
-const props = defineProps({
+interface HabitProps {
   habit: {
-    type: Object,
-    required: true,
-  },
-})
+    id?: string;
+    name: string;
+    completedDates: string[];
+    [key: string]: any;
+  }
+}
+
+const props = defineProps<HabitProps>()
 
 const store = useHabitStore()
 
-function isSameDay(date1, date2) {
+function isSameDay(date1: Date, date2: Date): boolean {
   return (
     date1.getFullYear() === date2.getFullYear() &&
     date1.getMonth() === date2.getMonth() &&
@@ -20,7 +23,7 @@ function isSameDay(date1, date2) {
   )
 }
 
-const streakMessage = computed(() => {
+const streakMessage = computed((): string => {
   if (!props.habit.completedDates || props.habit.completedDates.length === 0) {
     return ''
   }
@@ -29,7 +32,7 @@ const streakMessage = computed(() => {
     return ''
   }
 
-  const completedDates = [...props.habit.completedDates].sort((a, b) => new Date(b) - new Date(a))
+  const completedDates = [...props.habit.completedDates].sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
   const selectedDateIndex = completedDates.findIndex((date) =>
     isSameDay(new Date(date), new Date(store.selectedDate)),
   )
@@ -41,7 +44,7 @@ const streakMessage = computed(() => {
   let streak = 1
   for (let i = selectedDateIndex + 1; i < completedDates.length; i++) {
     const diff =
-      (new Date(completedDates[i - 1]) - new Date(completedDates[i])) / (1000 * 3600 * 24)
+      (new Date(completedDates[i - 1]).getTime() - new Date(completedDates[i]).getTime()) / (1000 * 3600 * 24)
     if (diff === 1) {
       streak++
     } else {

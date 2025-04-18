@@ -1,11 +1,14 @@
-<script setup>
-import { computed } from 'vue'
+<script setup lang="ts">
+import { computed, defineProps } from 'vue'
 import { useHabitStore } from '../store/habits'
 import HabitItem from './HabitItem.vue'
 
-defineProps({
-  selectedDate: String,
-})
+// Define prop types
+interface Props {
+  selectedDate: string
+}
+
+const props = defineProps<Props>()
 
 const store = useHabitStore()
 
