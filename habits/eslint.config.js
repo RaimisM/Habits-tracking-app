@@ -31,6 +31,12 @@ export default [
       ...pluginVue.configs['flat/essential'].rules,
       ...skipFormatting.rules,
       ...airbnb.rules,
+      // Disable the no-unused-vars rule for parameters that start with underscore
+      'no-unused-vars': ['error', { 
+        'argsIgnorePattern': '^_',
+        'varsIgnorePattern': '^_',
+        'caughtErrorsIgnorePattern': '^_'
+      }],
     },
     ignores: ['**/dist/**'],
   },

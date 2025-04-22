@@ -1,15 +1,5 @@
 import { defineStore } from 'pinia'
-
-interface Habit {
-  id: number
-  name: string
-  completedDates: string[]
-  active: boolean
-  date: string
-  stoppedDate: string | null
-  longestStreak?: number
-  lastStreakCalculation?: number | null
-}
+import { Habit } from '../types'
 
 interface HabitState {
   habits: Habit[]
@@ -17,25 +7,26 @@ interface HabitState {
 }
 
 // Define types for the getters using proper Pinia constraints
+// Use underscore prefix for unused parameters to avoid ESLint errors
 type HabitGetters = {
-  getHabitsForDate: (state: HabitState) => (date: string) => Habit[]
-  isHabitCompletedForDate: (state: HabitState) => (habitId: number, date: string) => boolean
-  getCurrentStreak: (state: HabitState) => (habitId: number, upToDate: string) => number
-  getLongestStreak: (state: HabitState) => (habitId: number) => number
-  isLongestStreak: (state: HabitState) => (habitId: number, upToDate: string) => boolean
-  [key: string]: (state: HabitState) => any // Index signature to satisfy _GettersTree constraint
+  getHabitsForDate: (_state: HabitState) => (_date: string) => Habit[]
+  isHabitCompletedForDate: (_state: HabitState) => (_habitId: number, _date: string) => boolean
+  getCurrentStreak: (_state: HabitState) => (_habitId: number, _upToDate: string) => number
+  getLongestStreak: (_state: HabitState) => (_habitId: number) => number
+  isLongestStreak: (_state: HabitState) => (_habitId: number, _upToDate: string) => boolean
+  [key: string]: (_state: HabitState) => any // Index signature to satisfy _GettersTree constraint
 }
 
 // Define a type for the actions
 interface HabitActions {
-  updateHabitName(habitId: number, newName: string): void
-  setSelectedDate(date: string): void
+  updateHabitName(_habitId: number, _newName: string): void
+  setSelectedDate(_date: string): void
   loadHabits(): void
-  addHabit(habitName: string): void
-  stopHabit(habitId: number, stoppedDate: string): void
-  removeHabit(id: number): void
-  updateHabitStatusForDate(habitId: number, date: string, isCompleted: boolean): void
-  updateHabitStatus(id: number, completed: boolean): void
+  addHabit(_habitName: string): void
+  stopHabit(_habitId: number, _stoppedDate: string): void
+  removeHabit(_id: number): void
+  updateHabitStatusForDate(_habitId: number, _date: string, _isCompleted: boolean): void
+  updateHabitStatus(_id: number, _completed: boolean): void
   saveHabits(): void
   loadStoppedHabitState(): void
 }
@@ -150,7 +141,8 @@ export const useHabitStore = defineStore<'habits', HabitState, HabitGetters, Hab
             previousDate = currentDate
           }
 
-          state.habits = state.habits.map((h) =>
+          // Using type assertion to avoid error with state mutation in getter
+          ;(state.habits as Habit[]) = state.habits.map((h) =>
             h.id === habitId
               ? { ...h, longestStreak, lastStreakCalculation: h.completedDates.length }
               : h,
@@ -160,7 +152,7 @@ export const useHabitStore = defineStore<'habits', HabitState, HabitGetters, Hab
         },
 
       isLongestStreak:
-        (state) =>
+        (_state) =>
         (habitId: number, upToDate: string): boolean => {
           // Fixed version - we need to use store access pattern instead
           const store = useHabitStore()
