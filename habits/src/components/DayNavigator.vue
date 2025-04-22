@@ -4,14 +4,12 @@ import { useRouter, useRoute } from 'vue-router'
 import dayjs from 'dayjs'
 import { useHabitStore } from '../store/habits'
 
-// Stores & router
 const store = useHabitStore()
 const router = useRouter()
 const route = useRoute()
 
 const today: string = dayjs().format('YYYY-MM-DD')
 
-// Function to validate dates in YYYY-MM-DD format
 const isValidDate = (dateString: string): boolean => {
   const datePattern = /^\d{4}-\d{2}-\d{2}$/
   if (!datePattern.test(dateString)) return false
@@ -20,7 +18,6 @@ const isValidDate = (dateString: string): boolean => {
   return date.isValid() && date.format('YYYY-MM-DD') === dateString
 }
 
-// Computed property to sync selected date
 const selectedDate = computed<string>({
   get: () => store.selectedDate,
   set: (newDate: string) => {
@@ -35,14 +32,12 @@ const selectedDate = computed<string>({
   },
 })
 
-// Function to change the date by X days
 const changeDay = (days: number): void => {
   const newDate = dayjs(selectedDate.value).add(days, 'day').format('YYYY-MM-DD')
   if (dayjs(newDate).isAfter(today)) return
   selectedDate.value = newDate
 }
 
-// On component mount, sync with URL date
 onMounted(() => {
   const routeDate = route.params.date as string | undefined
   if (routeDate) {
@@ -56,7 +51,6 @@ onMounted(() => {
   }
 })
 
-// Watch for route date changes
 watch(
   () => route.params.date,
   (newDate) => {

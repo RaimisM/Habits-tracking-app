@@ -1,18 +1,16 @@
 <script setup lang="ts">
-import { computed, defineProps } from 'vue'
+import { computed } from 'vue'
 import { useHabitStore } from '../store/habits'
 import HabitItem from './HabitItem.vue'
+import { Habit } from '../types'
 
-// Define prop types
-interface Props {
+const props = defineProps<{
   selectedDate: string
-}
-
-const props = defineProps<Props>()
+}>()
 
 const store = useHabitStore()
 
-const habits = computed(() => store.habits)
+const habits = computed<Habit[]>(() => store.habits)
 </script>
 
 <template>
@@ -22,7 +20,7 @@ const habits = computed(() => store.habits)
       v-for="habit in habits"
       :key="habit.id"
       :habit="habit"
-      :selectedDate="selectedDate"
+      :selectedDate="props.selectedDate"
     />
   </div>
 </template>

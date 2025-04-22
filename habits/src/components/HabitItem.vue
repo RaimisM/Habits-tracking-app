@@ -4,16 +4,13 @@ import { useHabitStore } from '../store/habits'
 import HabitTracker from './HabitTracker.vue'
 import { HabitItemProps } from '../types'
 
-// Define props using the imported interface
 const props = defineProps<HabitItemProps>()
-
 const store = useHabitStore()
 const isEditing = ref(false)
 const newName = ref(props.habit.name)
 const isActionVisible = ref(false)
 const isStopped = computed(() => !!props.habit.stoppedDate)
 
-// stop date
 const formattedStopDate = computed(() => {
   if (!props.habit.stoppedDate) return ''
   const date = new Date(props.habit.stoppedDate)
@@ -25,7 +22,6 @@ const isCompletedForSelectedDate = computed(() => {
 })
 
 const updateHabitStatus = () => {
-  // Prevent updating status if stopped
   if (isStopped.value && new Date(store.selectedDate) <= new Date(props.habit.stoppedDate as string)) {
     return
   }
@@ -36,18 +32,15 @@ const updateHabitStatus = () => {
   )
 }
 
-// Remove habit from the list
 const removeHabit = () => {
   store.removeHabit(props.habit.id)
 }
 
-// Stop the habit
 const stopHabit = () => {
   const stopDate = store.selectedDate
   store.stopHabit(props.habit.id, stopDate)
 }
 
-// Edit habit
 const editHabit = () => {
   if (isEditing.value) {
     store.updateHabitName(props.habit.id, newName.value)
@@ -61,7 +54,6 @@ const toggleActionVisibility = () => {
   isActionVisible.value = !isActionVisible.value
 }
 
-// Close menu when clicking outside
 const handleClickOutside = (event: MouseEvent) => {
   const target = event.target as HTMLElement
   if (!target.closest('.habit-item')) {
@@ -77,7 +69,6 @@ onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)
 })
 
-// Visibility logic
 const isHabitVisible = computed(() => {
   if (!props.habit.stoppedDate) {
     return true
@@ -89,7 +80,6 @@ const isHabitVisible = computed(() => {
   return selectedDateObj <= stoppedDateObj
 })
 
-// Computed to check if checkbox should be disabled
 const isCheckboxDisabled = computed(() => {
   return isStopped.value && new Date(store.selectedDate) <= new Date(props.habit.stoppedDate as string)
 })
@@ -183,7 +173,6 @@ const isCheckboxDisabled = computed(() => {
   min-width: 0;
 }
 
-/* Checkbox and Habit Name */
 .habit-checkbox {
   appearance: none;
   width: 20px;
@@ -228,7 +217,6 @@ const isCheckboxDisabled = computed(() => {
   white-space: normal;
 }
 
-/* Hamburger Menu Button */
 .hamburger-button {
   background: none;
   border: none;
