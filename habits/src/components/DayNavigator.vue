@@ -44,7 +44,7 @@ onMounted(() => {
     if (isValidDate(routeDate)) {
       store.selectedDate = routeDate
     } else {
-      alert('Invalid date detected in URL. Redirecting to today\'s date.')
+      alert("Invalid date detected in URL. Redirecting to today's date.")
       store.selectedDate = today
       router.push(`/day/${today}`)
     }
@@ -57,11 +57,11 @@ watch(
     if (typeof newDate === 'string' && isValidDate(newDate)) {
       store.selectedDate = newDate
     } else {
-      alert('Invalid date detected. Redirecting to today\'s date.')
+      alert("Invalid date detected. Redirecting to today's date.")
       store.selectedDate = today
       router.push(`/day/${today}`)
     }
-  }
+  },
 )
 </script>
 

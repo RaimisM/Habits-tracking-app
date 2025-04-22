@@ -24,7 +24,9 @@ const streakMessage = computed((): string => {
     return ''
   }
 
-  const completedDates = [...props.habit.completedDates].sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
+  const completedDates = [...props.habit.completedDates].sort(
+    (a, b) => new Date(b).getTime() - new Date(a).getTime(),
+  )
   const selectedDateIndex = completedDates.findIndex((date) =>
     isSameDay(new Date(date), new Date(store.selectedDate)),
   )
@@ -36,7 +38,8 @@ const streakMessage = computed((): string => {
   let streak = 1
   for (let i = selectedDateIndex + 1; i < completedDates.length; i++) {
     const diff =
-      (new Date(completedDates[i - 1]).getTime() - new Date(completedDates[i]).getTime()) / (1000 * 3600 * 24)
+      (new Date(completedDates[i - 1]).getTime() - new Date(completedDates[i]).getTime()) /
+      (1000 * 3600 * 24)
     if (diff === 1) {
       streak++
     } else {

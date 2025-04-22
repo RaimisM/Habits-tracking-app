@@ -22,7 +22,10 @@ const isCompletedForSelectedDate = computed(() => {
 })
 
 const updateHabitStatus = () => {
-  if (isStopped.value && new Date(store.selectedDate) <= new Date(props.habit.stoppedDate as string)) {
+  if (
+    isStopped.value &&
+    new Date(store.selectedDate) <= new Date(props.habit.stoppedDate as string)
+  ) {
     return
   }
   store.updateHabitStatusForDate(
@@ -81,7 +84,9 @@ const isHabitVisible = computed(() => {
 })
 
 const isCheckboxDisabled = computed(() => {
-  return isStopped.value && new Date(store.selectedDate) <= new Date(props.habit.stoppedDate as string)
+  return (
+    isStopped.value && new Date(store.selectedDate) <= new Date(props.habit.stoppedDate as string)
+  )
 })
 </script>
 
