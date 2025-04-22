@@ -1,17 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useHabitStore } from '../store/habits'
+import { HabitTrackerProps } from '../types'
 
-interface HabitProps {
-  habit: {
-    id?: string;
-    name: string;
-    completedDates: string[];
-    [key: string]: any;
-  }
-}
-
-const props = defineProps<HabitProps>()
+const props = defineProps<HabitTrackerProps>()
 
 const store = useHabitStore()
 

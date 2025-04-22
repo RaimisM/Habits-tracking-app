@@ -1,21 +1,22 @@
 import js from '@eslint/js';
 import pluginVue from 'eslint-plugin-vue';
-import vueParser from 'vue-eslint-parser'; // ✅ Import parser properly
+import vueParser from 'vue-eslint-parser';
 import globals from 'globals';
 import skipFormatting from '@vue/eslint-config-prettier/skip-formatting.js';
 import airbnb from '@vue/eslint-config-airbnb';
+import tsParser from '@typescript-eslint/parser';
 
 export default [
   {
     name: 'app/files-to-lint',
-    files: ['**/*.{js,mjs,jsx,vue}'],
+    files: ['**/*.{js,mjs,jsx,ts,tsx,vue}'],
     languageOptions: {
       parser: vueParser,
       parserOptions: {
-        parser: '@babel/eslint-parser',
+        parser: tsParser,
         sourceType: 'module',
         ecmaVersion: 'latest',
-        requireConfigFile: false,
+        extraFileExtensions: ['.vue'],
       },
       globals: {
         ...globals.node,

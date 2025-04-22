@@ -2,17 +2,10 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useHabitStore } from '../store/habits'
 import HabitTracker from './HabitTracker.vue'
+import { HabitItemProps } from '../types'
 
-// Define props using TypeScript's type annotations for defineProps
-const props = defineProps<{
-  habit: {
-    id: number;
-    name: string;
-    stoppedDate?: string;
-    completedDates?: string[];
-  };
-  selectedDate: string;
-}>()
+// Define props using the imported interface
+const props = defineProps<HabitItemProps>()
 
 const store = useHabitStore()
 const isEditing = ref(false)

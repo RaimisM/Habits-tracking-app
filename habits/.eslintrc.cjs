@@ -5,6 +5,13 @@ const path = require('node:path')
 
 module.exports = {
   root: true,
+  parser: 'vue-eslint-parser',
+  parserOptions: {
+    parser: '@typescript-eslint/parser',
+    ecmaVersion: 'latest',
+    sourceType: 'module',
+    extraFileExtensions: ['.vue'],
+  },
   extends: [
     'plugin:vue/vue3-essential',
     'eslint:recommended',
@@ -12,15 +19,11 @@ module.exports = {
     '@vue/eslint-config-typescript',
     '@vue/eslint-config-prettier/skip-formatting',
   ],
-  parserOptions: {
-    ecmaVersion: 'latest',
-  },
   rules: {
-    'no-use-before-define': ['error', { 'functions': false }],
+    'no-use-before-define': ['error', { functions: false }],
     'import/extensions': 'off',
   },
   settings: {
-    // to make our custom @ alias resolvable by ESLint import rules
     'import/resolver': {
       [require.resolve('eslint-import-resolver-node')]: {},
       [require.resolve('eslint-import-resolver-custom-alias')]: {
