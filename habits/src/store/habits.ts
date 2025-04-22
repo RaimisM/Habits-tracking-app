@@ -6,18 +6,15 @@ interface HabitState {
   selectedDate: string
 }
 
-// Define types for the getters using proper Pinia constraints
-// Use underscore prefix for unused parameters to avoid ESLint errors
 type HabitGetters = {
   getHabitsForDate: (_state: HabitState) => (_date: string) => Habit[]
   isHabitCompletedForDate: (_state: HabitState) => (_habitId: number, _date: string) => boolean
   getCurrentStreak: (_state: HabitState) => (_habitId: number, _upToDate: string) => number
   getLongestStreak: (_state: HabitState) => (_habitId: number) => number
   isLongestStreak: (_state: HabitState) => (_habitId: number, _upToDate: string) => boolean
-  [key: string]: (_state: HabitState) => any // Index signature to satisfy _GettersTree constraint
+  [key: string]: (_state: HabitState) => any
 }
 
-// Define a type for the actions
 interface HabitActions {
   updateHabitName(_habitId: number, _newName: string): void
   setSelectedDate(_date: string): void
@@ -141,7 +138,6 @@ export const useHabitStore = defineStore<'habits', HabitState, HabitGetters, Hab
             previousDate = currentDate
           }
 
-          // Using type assertion to avoid error with state mutation in getter
           ;(state.habits as Habit[]) = state.habits.map((h) =>
             h.id === habitId
               ? { ...h, longestStreak, lastStreakCalculation: h.completedDates.length }
@@ -154,7 +150,6 @@ export const useHabitStore = defineStore<'habits', HabitState, HabitGetters, Hab
       isLongestStreak:
         (_state) =>
         (habitId: number, upToDate: string): boolean => {
-          // Fixed version - we need to use store access pattern instead
           const store = useHabitStore()
           const currentStreak = store.getCurrentStreak(habitId, upToDate)
           const longestStreak = store.getLongestStreak(habitId)
