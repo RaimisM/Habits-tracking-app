@@ -28,12 +28,12 @@ const validateAndProcessDate = (dateString: string): string => {
     alert('Invalid date format. Please use YYYY-MM-DD format with valid date values.')
     return today
   }
-  
+
   if (isFutureDate(dateString)) {
     alert('Cannot navigate to future dates. Redirecting to today.')
     return today
   }
-  
+
   return dateString
 }
 
@@ -70,7 +70,7 @@ onMounted(() => {
   if (routeDate) {
     const validatedDate = validateAndProcessDate(routeDate)
     store.selectedDate = validatedDate
-    
+
     if (validatedDate !== routeDate) {
       router.push(`/day/${validatedDate}`)
     }
@@ -100,22 +100,22 @@ watch(
 <template>
   <div class="day-navigator">
     <button @click="changeDay(-1)" class="nav-btn">← Previous</button>
-    
+
     <div class="date-selector">
       <span @click="toggleDatePicker" class="selected-date">{{ selectedDate }}</span>
-      
+
       <div v-if="showDatePicker" class="date-picker-container">
-        <input 
-          type="date" 
-          :value="selectedDate" 
-          :max="maxDate" 
-          @change="handleDateSelect" 
+        <input
+          type="date"
+          :value="selectedDate"
+          :max="maxDate"
+          @change="handleDateSelect"
           class="date-picker"
           ref="datePicker"
         />
       </div>
     </div>
-    
+
     <button @click="changeDay(1)" :disabled="selectedDate === today" class="nav-btn">Next →</button>
   </div>
 </template>
