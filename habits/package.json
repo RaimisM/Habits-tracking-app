@@ -8,6 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --fix",
+    "test:e2e": "npx playwright test",
     "format": "prettier --write src/",
     "stylelint": "stylelint \"**/*.{vue,css,scss}\"",
     "stylelint:fix": "stylelint \"**/*.{vue,css,scss}\" --fix"
@@ -21,6 +22,7 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.27.0",
+    "@playwright/test": "^1.52.0",
     "@rushstack/eslint-patch": "^1.10.2",
     "@types/node": "^22.14.1",
     "@typescript-eslint/eslint-plugin": "^8.31.0",
