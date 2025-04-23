@@ -41,7 +41,7 @@ const addHabit = (): void => {
 
         <div class="modal-actions">
           <button @click="isOpen = false" class="btn btn-cancel">Cancel</button>
-          <button @click="addHabit" class="btn btn-add">Add Habit</button>
+          <button @click="addHabit" class="btn btn-add">Save</button>
         </div>
       </div>
     </div>
