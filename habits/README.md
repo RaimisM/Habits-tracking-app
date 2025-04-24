@@ -54,6 +54,8 @@ Open `http://localhost:5173` in your browser to view the app.
 | `npm run lint` | Run ESLint for code quality checks |
 | `npm run format` | Format code using Prettier |
 | `npm run stylelint` | Lint CSS/styling |
+| `npx playwright test app-flow.spec.ts` | Playwright testing of application flow |
+| `npx vitest run habits.test.ts` | Vitest testing non-trivial functions |
 
 ## 🖥️ Recommended IDE Setup
 
@@ -63,3 +65,4 @@ Open `http://localhost:5173` in your browser to view the app.
   - Prettier
   - Stylelint
   - Playwright
+  - Vitest
