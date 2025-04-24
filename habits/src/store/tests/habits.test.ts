@@ -2,7 +2,6 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { useHabitStore } from '../habits'
 
-
 describe('Habit Store - Streak Getters', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
@@ -96,7 +95,7 @@ describe('Habit Store - Streak Getters', () => {
     beforeEach(() => {
       setActivePinia(createPinia())
     })
-  
+
     it('returns habits active on the selected date', () => {
       const store = useHabitStore()
       store.habits = [
@@ -131,7 +130,7 @@ describe('Habit Store - Streak Getters', () => {
           lastStreakCalculation: 0,
         },
       ]
-  
+
       const results = store.getHabitsForDate('2025-04-23')
       expect(results.map((h) => h.name)).toContain('Read')
       expect(results.map((h) => h.name)).toContain('Run')
@@ -141,9 +140,8 @@ describe('Habit Store - Streak Getters', () => {
   describe('Habit Store - updateHabitStatusForDate', () => {
     beforeEach(() => {
       setActivePinia(createPinia())
-
     })
-  
+
     it('adds date to completedDates when marked completed', () => {
       const store = useHabitStore()
       store.habits = [
@@ -158,13 +156,13 @@ describe('Habit Store - Streak Getters', () => {
           lastStreakCalculation: 0,
         },
       ]
-  
+
       store.updateHabitStatusForDate(1, '2025-04-24', true)
-  
+
       expect(store.habits[0].completedDates).toContain('2025-04-24')
       expect(store.habits[0].lastStreakCalculation).toBe(null)
     })
-  
+
     it('removes date from completedDates when marked incomplete', () => {
       const store = useHabitStore()
       store.habits = [
@@ -179,12 +177,11 @@ describe('Habit Store - Streak Getters', () => {
           lastStreakCalculation: 2,
         },
       ]
-  
+
       store.updateHabitStatusForDate(2, '2025-04-24', false)
-  
+
       expect(store.habits[0].completedDates).not.toContain('2025-04-24')
       expect(store.habits[0].lastStreakCalculation).toBe(null)
     })
   })
-  
 })

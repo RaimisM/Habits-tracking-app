@@ -1,6 +1,6 @@
 # Habits Tracking App
 
-A Vue 3 application for tracking and managing personal habits, built with Vite.
+A Vue 3 application for tracking and managing personal habits, built with Vite and tested using Vitest and Playwright
 
 ## 🌟 Project Overview
 
@@ -13,6 +13,7 @@ Habits is a modern, responsive web application designed to help users track, mon
 - **Routing**: Vue Router
 - **Build Tool**: Vite
 - **Code Quality**: ESLint, Prettier, Stylelint
+- **Tests**: Vitest, Playwright
 
 ## 📋 Prerequisites
 
@@ -61,3 +62,4 @@ Open `http://localhost:5173` in your browser to view the app.
   - ESLint
   - Prettier
   - Stylelint
+  - Playwright
