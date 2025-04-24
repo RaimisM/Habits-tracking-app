@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import dayjs from 'dayjs'
@@ -9,9 +9,9 @@ import HabitList from '../components/HabitList.vue'
 const route = useRoute()
 const router = useRouter()
 const store = useHabitStore()
-const today = dayjs().format('YYYY-MM-DD')
+const today: string = dayjs().format('YYYY-MM-DD')
 
-const isValidDate = (dateString) => {
+const isValidDate = (dateString: string): boolean => {
   const datePattern = /^\d{4}-\d{2}-\d{2}$/
   if (!datePattern.test(dateString)) return false
 
@@ -21,8 +21,9 @@ const isValidDate = (dateString) => {
 
 onMounted(() => {
   if (route.params.date) {
-    if (isValidDate(route.params.date)) {
-      store.selectedDate = route.params.date
+    const dateParam = route.params.date as string
+    if (isValidDate(dateParam)) {
+      store.selectedDate = dateParam
     } else {
       alert("Invalid date detected in URL. Redirecting to today's date.")
       store.selectedDate = today
@@ -35,8 +36,9 @@ watch(
   () => route.params.date,
   (newDate) => {
     if (newDate) {
-      if (isValidDate(newDate)) {
-        store.selectedDate = newDate
+      const dateParam = newDate as string
+      if (isValidDate(dateParam)) {
+        store.selectedDate = dateParam
       } else {
         alert("Invalid date detected. Redirecting to today's date.")
         store.selectedDate = today
@@ -50,6 +52,6 @@ watch(
 <template>
   <div>
     <DayNavigator />
-    <HabitList />
+    <HabitList :selectedDate="store.selectedDate" />
   </div>
 </template>
