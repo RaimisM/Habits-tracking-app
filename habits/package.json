@@ -11,7 +11,10 @@
     "test:e2e": "npx playwright test",
     "format": "prettier --write src/",
     "stylelint": "stylelint \"**/*.{vue,css,scss}\"",
-    "stylelint:fix": "stylelint \"**/*.{vue,css,scss}\" --fix"
+    "stylelint:fix": "stylelint \"**/*.{vue,css,scss}\" --fix",
+    "test": "vitest",
+    "test:run": "vitest",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@eslint/js": "^9.22.0",
@@ -22,12 +25,14 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.27.0",
+    "@pinia/testing": "^1.0.1",
     "@playwright/test": "^1.52.0",
     "@rushstack/eslint-patch": "^1.10.2",
     "@types/node": "^22.14.1",
     "@typescript-eslint/eslint-plugin": "^8.31.0",
     "@typescript-eslint/parser": "^8.31.0",
     "@vitejs/plugin-vue": "^5.2.3",
+    "@vitest/ui": "^3.1.2",
     "@vue/eslint-config-airbnb": "^8.0.0",
     "@vue/eslint-config-prettier": "^9.0.0",
     "babel-eslint": "^10.1.0",
@@ -35,6 +40,7 @@
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-vue": "^9.33.0",
     "globals": "^16.0.0",
+    "happy-dom": "^17.4.4",
     "prettier": "^3.5.3",
     "prettier-plugin-css-order": "^2.1.2",
     "stylelint": "^16.16.0",
@@ -43,6 +49,7 @@
     "typescript": "^5.8.3",
     "vite": "^6.2.2",
     "vite-plugin-vue-devtools": "^7.7.2",
+    "vitest": "^3.1.2",
     "vue-eslint-parser": "^10.1.3"
   }
 }
