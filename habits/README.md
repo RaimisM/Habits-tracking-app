@@ -33,6 +33,7 @@ cd habits
 
 ```bash
 npm install
+npx playwright install
 ```
 
 ### 3. Development Server
