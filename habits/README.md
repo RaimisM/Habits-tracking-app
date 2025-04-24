@@ -13,7 +13,7 @@ Habits is a modern, responsive web application designed to help users track, mon
 - **Routing**: Vue Router
 - **Build Tool**: Vite
 - **Code Quality**: ESLint, Prettier, Stylelint
-- **Tests**: Vitest, Playwright
+- **Testing**: Vitest, Playwright
 
 ## 📋 Prerequisites
 
