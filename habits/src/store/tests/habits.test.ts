@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { useHabitStore } from '../habits'
 
@@ -71,7 +71,7 @@ describe('Habit Store - Streak Getters', () => {
       },
     ]
 
-    expect(store.getLongestStreak(3)).toBe(4) // 18,19,20,21
+    expect(store.getLongestStreak(3)).toBe(4)
   })
 
   it('caches longest streak when no new dates are added', () => {
@@ -89,7 +89,6 @@ describe('Habit Store - Streak Getters', () => {
       },
     ]
 
-    // should return cached value
     expect(store.getLongestStreak(4)).toBe(3)
   })
 
@@ -142,15 +141,7 @@ describe('Habit Store - Streak Getters', () => {
   describe('Habit Store - updateHabitStatusForDate', () => {
     beforeEach(() => {
       setActivePinia(createPinia())
-      // optional: mock localStorage to prevent errors
-      globalThis.localStorage = {
-        setItem: vi.fn(),
-        getItem: vi.fn(),
-        removeItem: vi.fn(),
-        clear: vi.fn(),
-        key: vi.fn(),
-        length: 0,
-      }
+
     })
   
     it('adds date to completedDates when marked completed', () => {
