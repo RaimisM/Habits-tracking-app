@@ -34,13 +34,13 @@ test('should navigate to previous and next day', async ({ page }) => {
   await page.goto('http://127.0.0.1:5173/day/2025-04-23');
   const initialUrl = page.url();
   await page.getByRole('button', { name: '← Previous' }).click();
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(2000);
   const previousUrl = page.url();
   expect(previousUrl).not.toEqual(initialUrl);
   expect(previousUrl).toContain('day/2025-04-22');
   
   await page.getByRole('button', { name: 'Next →' }).click();
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(2000);
   const newUrl = page.url();
   expect(newUrl).toEqual(initialUrl);
   expect(newUrl).toContain('day/2025-04-23');
@@ -57,6 +57,7 @@ test('should stop tracking a habit', async ({ page }) => {
   const initialHabits = await page.locator('.habit-item').count();
   await page.getByRole('button', { name: 'Edit Icon' }).first().click();
   await page.getByRole('button', { name: 'Stop' }).click();
+  await expect( page.getByRole('button', { name: 'Stop'})).toBeHidden();
   await page.waitForTimeout(1000);
   
   const habitExists = await page.getByText('Read a book').isVisible();

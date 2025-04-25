@@ -42,6 +42,7 @@ const removeHabit = () => {
 const stopHabit = () => {
   const stopDate = store.selectedDate
   store.stopHabit(props.habit.id, stopDate)
+  toggleActionVisibility()
 }
 
 const editHabit = () => {
